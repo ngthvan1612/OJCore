@@ -96,7 +96,7 @@ namespace Judge
                 }
                 else if (cmd == "export")
                 {
-                    judger.Export();
+                    judger.ExportExcel();
                 }
                 else if (cmd == "save")
                 {

@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{93095F4A-8576-4D38-9562-16E1BA3D576D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Jugde</RootNamespace>
+    <RootNamespace>Judge</RootNamespace>
     <AssemblyName>Judge</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -103,7 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\JudgeException.cs" />
-    <Compile Include="Cores\Judger.cs" />
+    <Compile Include="Cores\JudgeCore.cs" />
     <Compile Include="Models\JudgeModel.cs" />
     <Compile Include="Models\SubmissionTestcaseResultModel.cs" />
     <Compile Include="Models\SubmissionModel.cs" />

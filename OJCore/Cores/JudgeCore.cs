@@ -53,7 +53,7 @@ namespace Judge.Cores
 
         private readonly ProblemModel problemModel;
         private readonly UserModel userModel;
-        private readonly JudgeModel gradingModel;
+        private readonly JudgeModel judgeModel;
         private readonly CompilerManager compilerManager;
         private readonly Sandbox sandbox;
         private readonly Checker checker;
@@ -84,50 +84,43 @@ namespace Judge.Cores
             sandbox = new Sandbox();
             problemModel = new ProblemModel();
             userModel = new UserModel();
-            gradingModel = new JudgeModel();
+            judgeModel = new JudgeModel();
             compilerManager = new CompilerManager();
             checker = new Checker();
             this.workSpace = workSpace;
         }
 
-        public void LoadContest(string dir)
-        {
-
-        }
-
-        public List<string> LoadProblemsDirectory(string dir)
+        private void LoadProblemsDirectory(string dir)
         {
             if (IsGrading)
                 throw new JudgeIsGradingException();
+            judgeModel.RemoveAllProblems();
             problemModel.LoadProblemsDirectory(dir);
-            gradingModel.RemoveAllProblems();
             List<string> problems = problemModel.GetListProblemnames();
-            gradingModel.BeginTransaction();
+            judgeModel.BeginTransaction();
             foreach (string problem in problems)
-                gradingModel.InsertProblem(problem);
-            gradingModel.EndTransaction();
+                judgeModel.InsertProblem(problem);
+            judgeModel.EndTransaction();
             RemoveAllSubmission();
-            return problems;
         }
 
         private void RemoveAllSubmission()
         {
-            gradingModel.RemoveAllSubmissions();
+            judgeModel.RemoveAllSubmissions();
         }
 
-        public List<string> LoadUsersDirectory(string dir)
+        private void LoadUsersDirectory(string dir)
         {
             if (IsGrading)
                 throw new JudgeIsGradingException();
+            judgeModel.RemoveAllUsers();
             userModel.LoadUsersDirectory(dir);
-            gradingModel.RemoveAllUsers();
             List<string> users = userModel.GetListUsernames();
-            gradingModel.BeginTransaction();
+            judgeModel.BeginTransaction();
             foreach (string user in users)
-                gradingModel.InsertUser(user);
-            gradingModel.EndTransaction();
+                judgeModel.InsertUser(user);
+            judgeModel.EndTransaction();
             RemoveAllSubmission();
-            return users;
         }
 
         public void StopGrade()
@@ -376,11 +369,11 @@ namespace Judge.Cores
             }
 
             //update status to database & calc score
-            int submission_id = gradingModel.CreateNewSubmission(problemName, userName, compileResult.Message, compiler.Name);
+            int submission_id = judgeModel.CreateNewSubmission(problemName, userName, compileResult.Message, compiler.Name);
             double totalScore = 0;
             foreach (SubmissionTestcaseResult r in gradingTestcaseResult)
             {
-                gradingModel.UpdateStatus(submission_id, r.TestcaseName,
+                judgeModel.UpdateStatus(submission_id, r.TestcaseName,
                     r.Points, r.Status, r.TimeExecuted, r.MemoryUsed);
                 totalScore += r.Points;
             }
@@ -536,22 +529,34 @@ namespace Judge.Cores
             })).Start();
         }
 
-        public void Open(string fileName)
+        private void CreateContestConfigFile()
         {
-            if (IsGrading)
-                throw new JudgeIsGradingException();
-            gradingModel.Load(fileName);
+            //string dir = Directory.GetDirectoryRoot(fileName);
+            //Console.WriteLine("dir = " + dir);
         }
 
-        public void Save(string fileName)
+        public void LoadContestDirectory(string dir)
         {
-            gradingModel.Save(fileName);
+            string configFile = Path.Combine(dir, "contest.ojdb");
+            if (!File.Exists(configFile))
+            {
+
+            }
+            else
+            {
+
+            }
         }
 
-        public void Export()
+        public void SaveContest()
+        {
+            //judgeModel.Save(fileName);
+        }
+
+        public void ExportExcel()
         {
             DataSet ds = new DataSet();
-            gradingModel.FillScoreboard(ds);
+            judgeModel.FillScoreboard(ds);
             new Thread(new ThreadStart(() =>
             {
                 ExportManager.ExportDataSetToExcel(ds, true);
