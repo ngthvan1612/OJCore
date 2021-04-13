@@ -63,8 +63,9 @@ namespace Judge
         public static void Main(string[] args)
         {
             judger = new Judger(@"C:\Users\Nguyen Van\temp_judge");
-            judger.LoadProblemsDirectory(@"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01\Problems");
-            judger.LoadUsersDirectory(@"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01\Users");
+            //judger.LoadProblemsDirectory(@"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01\Problems");
+            //judger.LoadUsersDirectory(@"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01\Users");
+            judger.LoadContestDirectory(@"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01");
             judger.OnGradeStatusChanged += Judger_OnGradeStatusChanged; ;
             while (true)
             {
@@ -85,8 +86,8 @@ namespace Judge
                     if (!judger.IsGrading)
                     {
                         InitFrm();
-                        judger.GradeSubmission("sumab", "rng58");
-                        //judger.GradeAll();
+                        //judger.GradeSubmission("sumab", "rng58");
+                        judger.GradeAll();
                         //judger.GradeUser("nnalovE");
                     }
                     else
@@ -100,7 +101,7 @@ namespace Judge
                 }
                 else if (cmd == "save")
                 {
-                    judger.Save("d:\\output.db");
+                    judger.SaveContest();
                 }
             }
         }

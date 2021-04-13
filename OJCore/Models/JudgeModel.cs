@@ -25,7 +25,7 @@
 
         public JudgeModel()
         {
-            connection = new SQLiteConnection("Data Source=:memory:;Version=3");
+            connection = new SQLiteConnection("Data Source=:memory:;Version=3;foreign keys=true;");
             connection.Open();
             InitDB();
             CreateNecessaryTables();
@@ -45,40 +45,40 @@
 
         private void CreateNecessaryTables()
         {
-            string CreateProblemsTable = "CREATE TABLE IF NOT EXISTS 'Problems' ( " +
-                "'ID'    INTEGER, " +
-                "'ProblemName'   INTEGER UNIQUE, " +
-                "PRIMARY KEY('ID' AUTOINCREMENT) " +
+            string CreateProblemsTable = "CREATE TABLE IF NOT EXISTS Problems ( " +
+                "ID    INTEGER, " +
+                "ProblemName   TEXT UNIQUE, " +
+                "PRIMARY KEY(ID AUTOINCREMENT) " +
             ");";
-            string CreateUsersTable = "CREATE TABLE IF NOT EXISTS 'Users'( " +
-                "'ID'    INTEGER, " +
-                "'UserName'  INTEGER UNIQUE, " +
-                "PRIMARY KEY('ID' AUTOINCREMENT) " +
+            string CreateUsersTable = "CREATE TABLE IF NOT EXISTS Users( " +
+                "ID    INTEGER, " +
+                "UserName  TEXT UNIQUE, " +
+                "PRIMARY KEY(ID AUTOINCREMENT) " +
             ");";
-            string CreateSubmissionsTable = "CREATE TABLE IF NOT EXISTS 'Submissions'( " +
-                "'ID'    INTEGER, " +
-                "'ProblemID' INTEGER NOT NULL, " +
-                "'UserID'    INTEGER NOT NULL, " +
-                "'CompileMessage'    TEXT, " +
-                "'TimeGrading'   TEXT, " +
-                "FOREIGN KEY('UserID') REFERENCES 'Users'('ID') ON DELETE CASCADE ON UPDATE CASCADE, " +
-                "FOREIGN KEY('ProblemID') REFERENCES 'Problems'('ID') ON DELETE CASCADE ON UPDATE CASCADE, " +
-                "PRIMARY KEY('ID' AUTOINCREMENT) " +
+            string CreateSubmissionsTable = "CREATE TABLE IF NOT EXISTS Submissions( " +
+                "ID    INTEGER, " +
+                "ProblemID INTEGER NOT NULL, " +
+                "UserID    INTEGER NOT NULL, " +
+                "CompileMessage    TEXT, " +
+                "Language   TEXT, " +
+                "FOREIGN KEY(UserID) REFERENCES Users(ID) ON DELETE CASCADE ON UPDATE CASCADE, " +
+                "FOREIGN KEY(ProblemID) REFERENCES Problems(ID) ON DELETE CASCADE ON UPDATE CASCADE, " +
+                "PRIMARY KEY(ID AUTOINCREMENT) " +
             ");";
-            string CreateSubmissionTestcaseResultsTable = "CREATE TABLE IF NOT EXISTS 'SubmissionTestcaseResults' ( " +
-                "'SubmissionID'  INTEGER, " +
-                "'Testcase'  TEXT, " +
-                "'TimeExecuted'  INTEGER, " +
-                "'MemoryUsed'    INTEGER, " +
-                "'Points'    REAL, " +
-                "'Status'    TEXT, " +
-                "FOREIGN KEY('SubmissionID') REFERENCES 'Submissions'('ID') ON DELETE CASCADE ON UPDATE CASCADE, " +
-                "PRIMARY KEY('SubmissionID', 'Testcase') " +
+            string CreateSubmissionTestcaseResultsTable = "CREATE TABLE IF NOT EXISTS SubmissionTestcaseResults ( " +
+                "SubmissionID  INTEGER, " +
+                "Testcase  TEXT, " +
+                "TimeExecuted  INTEGER, " +
+                "MemoryUsed    INTEGER, " +
+                "Points    REAL, " +
+                "Status    TEXT, " +
+                "FOREIGN KEY(SubmissionID) REFERENCES Submissions(ID) ON DELETE CASCADE ON UPDATE CASCADE, " +
+                "PRIMARY KEY(SubmissionID, Testcase) " +
             ");";
-            string CreateSettingsTable = "CREATE TABLE IF NOT EXISTS 'Settings'( " +
-                "'Name'  TEXT NOT NULL UNIQUE, " +
-                "'Value' TEXT NOT NULL, " +
-                "PRIMARY KEY('Name') " +
+            string CreateSettingsTable = "CREATE TABLE IF NOT EXISTS Settings( " +
+                "Name  TEXT NOT NULL UNIQUE, " +
+                "Value TEXT NOT NULL, " +
+                "PRIMARY KEY(Name) " +
             ");";
             string CreateDefaultSettings = "INSERT INTO Settings([Name], [Value]) VALUES " +
                 "('ProblemDir', ''), " +
@@ -307,7 +307,10 @@
                 "INNER JOIN Users " +
                 "    ON Users.ID = Submissions.UserID " +
                 "GROUP BY " +
-                "    UserID, ProblemID; ";
+                "    UserID, ProblemID " +
+                "ORDER BY " +
+                "    UserID, ProblemID " +
+                ";";
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
                 SQLiteDataReader reader = command.ExecuteReader();

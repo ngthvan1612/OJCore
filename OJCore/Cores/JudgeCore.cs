@@ -45,6 +45,8 @@ namespace Judge.Cores
 
     public class Judger
     {
+        public string CurrentContestDir { get; private set; } = "";
+
         public delegate void JudgeGradingEventHandler(object sender, JudgeGradingEvent args);
         public delegate void JudgeUpdateScoreSubmissionHandler(object sender, JudgeUpdateScoreSubmissionEvent args);
 
@@ -529,28 +531,32 @@ namespace Judge.Cores
             })).Start();
         }
 
-        private void CreateContestConfigFile()
-        {
-            //string dir = Directory.GetDirectoryRoot(fileName);
-            //Console.WriteLine("dir = " + dir);
-        }
-
         public void LoadContestDirectory(string dir)
         {
-            string configFile = Path.Combine(dir, "contest.ojdb");
-            if (!File.Exists(configFile))
+            string problemDir = Path.Combine(dir, "Problems");
+            if (!Directory.Exists(problemDir))
+                throw new JudgeDirectoryNotFoundException(problemDir);
+            string userDir = Path.Combine(dir, "Users");
+            if (!Directory.Exists(userDir))
+                throw new JudgeDirectoryNotFoundException(userDir);
+            LoadProblemsDirectory(problemDir);
+            LoadUsersDirectory(userDir);
+            string offlineJudgeDBFile = Path.Combine(dir, "contest.ojdb");
+            if (!File.Exists(offlineJudgeDBFile))
             {
-
+                judgeModel.Save(offlineJudgeDBFile);
             }
             else
             {
-
+                File.SetAttributes(offlineJudgeDBFile, FileAttributes.Normal);
+                judgeModel.Load(offlineJudgeDBFile);
             }
+            CurrentContestDir = dir;
         }
 
         public void SaveContest()
         {
-            //judgeModel.Save(fileName);
+            judgeModel.Save(Path.Combine(CurrentContestDir, "contest.ojdb"));
         }
 
         public void ExportExcel()
