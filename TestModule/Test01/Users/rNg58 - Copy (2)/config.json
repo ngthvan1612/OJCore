@@ -1,0 +1,11 @@
+﻿{
+  "Input": "rNg58.INP",
+  "Output": "rNg58.OUT",
+  "UseStdin": false,
+  "UseStdout": false,
+  "Timelimit": 1000,
+  "Memorylimit": 16384,
+  "Checker": "c:/windows/system32/fc.exe",
+  "ProblemType": "OI",
+  "Testcases": []
+}

@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Judge.Cores.Judger">
+    <Position X="7.25" Y="0.75" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="Judge.Cores.Judger.JudgeGradingEventHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Cores\Judger.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="Judge.Cores.Judger.JudgeUpdateScoreSubmissionHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Cores\Judger.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAQAAIAAAgAAsSAAEgMABAgAAoAAAAAAQAQAAAEAiaA=</HashCode>
+      <FileName>Cores\Judger.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="compilerManager" />
+      <Field Name="gradingModel" />
+      <Field Name="userModel" />
+      <Field Name="sandbox" />
+      <Field Name="problemModel" />
+      <Field Name="checker" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Judge.Supports.CompilerManager" Collapsed="true">
+    <Position X="10.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEEAAAAAAAAAAAECAAAAAAAAAAAAAAAAAAAAAAYAAA=</HashCode>
+      <FileName>Supports\Compiler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Judge.Models.GradingModel" Collapsed="true">
+    <Position X="10.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIAFAAJABgAAAAABAIEAAABBAAAAAAAAAAhABAI=</HashCode>
+      <FileName>Models\GradingModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Judge.Models.UserModel" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAACAAAABAAAgAAAAAAAAAQAAAQAAA=</HashCode>
+      <FileName>Models\UserModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Judge.Supports.Sandbox" Collapsed="true">
+    <Position X="4" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAEAAAAAAAAAAAAAAAAAAAAAEAAAAAgAA=</HashCode>
+      <FileName>Supports\Sandbox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Judge.Models.ProblemModel" Collapsed="true">
+    <Position X="4" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAgAAAAQgAACAAAgAAAAAAAACAAAAAAAAAQAAA=</HashCode>
+      <FileName>Models\ProblemModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Judge.Supports.Checker" Collapsed="true">
+    <Position X="10.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Supports\Checker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

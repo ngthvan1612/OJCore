@@ -1,0 +1,92 @@
+﻿{
+  "Input": "SumAB.INP",
+  "Output": "SumAB.OUT",
+  "UseStdin": true,
+  "UseStdout": true,
+  "Timelimit": 500,
+  "Memorylimit": 2000,
+  "Checker": "c:/windows/system32/fc.exe",
+  "ProblemType": "ACM",
+  "Testcases": [
+    {
+      "TestcaseName": "test1",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test10",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test11",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test12",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test13",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test14",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test15",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test16",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test17",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test18",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test19",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test2",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test20",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test3",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test4",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test5",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test6",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test7",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test8",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test9",
+      "Point": 1
+    }
+  ]
+}

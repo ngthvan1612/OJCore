@@ -1,0 +1,72 @@
+﻿{
+  "Input": "CountTime.INP",
+  "Output": "CountTime.OUT",
+  "UseStdin": true,
+  "UseStdout": true,
+  "Timelimit": 1000,
+  "Memorylimit": 16384,
+  "Checker": "c:/windows/system32/fc.exe",
+  "ProblemType": "OI",
+  "Testcases": [
+    {
+      "TestcaseName": "test1",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test10",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test11",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test12",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test13",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test14",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test15",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test2",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test3",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test4",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test5",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test6",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test7",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test8",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test9",
+      "Point": 1
+    }
+  ]
+}
