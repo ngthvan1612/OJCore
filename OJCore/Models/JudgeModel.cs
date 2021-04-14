@@ -12,15 +12,11 @@
     public class JudgeModel
     {
         private readonly SQLiteConnection connection;
-        public string ProblemDir
+
+        public string ContestName
         {
-            get => GetProblemDirectory();
-            set => UpdateProblemDirectory(value);
-        }
-        public string UserDir
-        {
-            get => GetUserDirectory();
-            set => UpdateUserDirectory(value);
+            get => GetSetting("contest_name");
+            set => UpdateSetting("contest_name", value);
         }
 
         public JudgeModel()
@@ -70,7 +66,7 @@
                 "Testcase  TEXT, " +
                 "TimeExecuted  INTEGER, " +
                 "MemoryUsed    INTEGER, " +
-                "Points    REAL, " +
+                "Points    REAL NOT NULL, " +
                 "Status    TEXT, " +
                 "FOREIGN KEY(SubmissionID) REFERENCES Submissions(ID) ON DELETE CASCADE ON UPDATE CASCADE, " +
                 "PRIMARY KEY(SubmissionID, Testcase) " +
@@ -80,56 +76,35 @@
                 "Value TEXT NOT NULL, " +
                 "PRIMARY KEY(Name) " +
             ");";
-            string CreateDefaultSettings = "INSERT INTO Settings([Name], [Value]) VALUES " +
-                "('ProblemDir', ''), " +
-                "('UserDir', '');";
             using (SQLiteCommand command = new SQLiteCommand(connection))
             {
                 command.CommandText = CreateProblemsTable + CreateUsersTable +
                     CreateSubmissionsTable + CreateSubmissionTestcaseResultsTable +
-                    CreateSettingsTable + CreateDefaultSettings;
+                    CreateSettingsTable;
                 command.ExecuteNonQuery();
             }
         }
 
-        private void UpdateProblemDirectory(string newDir)
+        private void UpdateSetting(string name, string newValue)
         {
-            string query = "UPDATE Settings SET[Value] = @newDir WHERE[Name] = 'ProblemDir';";
+            string query = "INSERT OR REPLACE INTO Settings([Name], [Value]) VALUES (@setting_name, @setting_value);";
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                command.Parameters.Add(new SQLiteParameter("@newDir", newDir));
+                command.Parameters.Add(new SQLiteParameter("@setting_name", name));
+                command.Parameters.Add(new SQLiteParameter("@setting_value", newValue));
                 command.ExecuteNonQuery();
             }
         }
 
-        private void UpdateUserDirectory(string newDir)
+        private string GetSetting(string name)
         {
-            string query = "UPDATE Settings SET[Value] = @newDir WHERE[Name] = 'UserDir';";
+            string query = "SELECT [Value] FROM Settings WHERE [Name] = @setting_name";
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                command.Parameters.Add(new SQLiteParameter("@newDir", newDir));
-                command.ExecuteNonQuery();
-            }
-        }
-
-        private string GetProblemDirectory()
-        {
-            string query = "SELECT [Value] FROM Settings WHERE [Name] = 'ProblemDir';";
-            using (SQLiteCommand command = new SQLiteCommand(query, connection))
-            {
+                command.Parameters.Add(new SQLiteParameter("@setting_name", name));
                 return Convert.ToString(command.ExecuteScalar());
             }
         }
-
-        private string GetUserDirectory()
-        {
-            string query = "SELECT [Value] FROM Settings WHERE [Name] = 'UserDir';";
-            using (SQLiteCommand command = new SQLiteCommand(query, connection))
-            {
-                return Convert.ToString(command.ExecuteScalar());
-            }
-        }
-
 
         /// <summary>
         /// [BEGIN TRANSACTION], for large data
