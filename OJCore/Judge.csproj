@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{93095F4A-8576-4D38-9562-16E1BA3D576D}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>Judge</RootNamespace>
     <AssemblyName>Judge</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>

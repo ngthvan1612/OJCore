@@ -255,7 +255,7 @@
         }
 
         /// <summary>
-        /// Delete all duplicate submissions and keep old submission
+        /// Delete all duplicate submissions and keep oldest submission
         /// </summary>
         private void DeleteAllDuplicateSubmissions()
         {
@@ -321,6 +321,7 @@
                 scoreBoard.Columns[i + 1].DefaultValue = 0.0;
                 problemsMap.Add(problems[i], i + 1);
             }
+            scoreBoard.Columns.Add("Total score");
 
             //Init rows
             for (int i = 0; i < users.Count; ++i)
@@ -329,12 +330,15 @@
                 usersMap.Add(users[i], i);
             }
 
+            //List<double> totalScore = new List<double>(users.Count);
+
             //Fill data
             for (int i = 0; i < submissions.Count; ++i)
             {
                 int pid = problemsMap[submissions[i].ProblemName];
                 int uid = usersMap[submissions[i].UserName];
                 scoreBoard.Rows[uid][pid] = submissions[i].Points;
+                //scoreBoard.Rows[uid][scoreBoard.Columns.Count - 1] += submissions[i].Points;
             }
 
             //Finish

@@ -161,6 +161,11 @@ namespace Judge.Models
             return problemsMap.Values.Cast<Problem>().Select(problem => problem.ProblemName).ToList();
         }
 
+        public List<Problem> GetProblems()
+        {
+            return problemsMap.Values.ToList();
+        }
+
         public void LoadProblemsDirectory(string dir)
         {
             if (!Directory.Exists(dir))

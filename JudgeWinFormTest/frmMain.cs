@@ -21,22 +21,7 @@ namespace JudgeWinFormTest
 
         private void btnLoadProblem_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderDialog = new FolderBrowserDialog()
-            {
-                SelectedPath = @"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01"
-            };
-            if (folderDialog.ShowDialog() == DialogResult.OK)
-            {
-                List<string> problems = judger.LoadProblemsDirectory(folderDialog.SelectedPath);
-                problemsMap.Clear();
-                scoreBoard.Columns.Clear();
-                for (int i = 0; i < problems.Count; ++i)
-                {
-                    scoreBoard.Columns.Add(problems[i], problems[i]);
-                    scoreBoard.Columns[scoreBoard.Columns.Count - 1].SortMode = DataGridViewColumnSortMode.NotSortable;
-                    problemsMap.Add(problems[i], i);
-                }
-            }
+            
         }
 
         private void frmMain_Load(object sender, EventArgs e)
@@ -108,32 +93,12 @@ namespace JudgeWinFormTest
 
         private void btnLoadUser_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderDialog = new FolderBrowserDialog()
-            {
-                SelectedPath = @"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01"
-            };
-            if (folderDialog.ShowDialog() == DialogResult.OK)
-            {
-                List<string> users = judger.LoadUsersDirectory(folderDialog.SelectedPath);
-                usersMap.Clear();
-                scoreBoard.Rows.Clear();
-                for (int i = 0; i < users.Count; ++i)
-                {
-                    usersMap.Add(users[i], i);
-                    scoreBoard.Rows.Add(new DataGridViewRow()
-                    {
-                        HeaderCell = new DataGridViewRowHeaderCell()
-                        {
-                            Value = users[i]
-                        }
-                    });
-                }
-            }
+            
         }
 
         private void btnExportExcel_Click(object sender, EventArgs e)
         {
-            judger.Export();
+            //judger.Export();
         }
 
         private void btnGrading_Click(object sender, EventArgs e)

@@ -128,7 +128,7 @@ namespace Judge
                 case JudgeGradingEventType.SubmissionNotFound:
                     SendData("Submission not found");
                     break;
-                case JudgeGradingEventType.BeginGrading:
+                case JudgeGradingEventType.BeginGradingSubmission:
                     SendData(string.Format("------> Grading... [user: '{0}', problem: '{1}']", args.UserName, args.ProblemName));
                     break;
                 case JudgeGradingEventType.CompilerNotFound:

@@ -12,7 +12,8 @@ namespace Judge.Cores
 
     public enum JudgeGradingEventType
     {
-        BeginGrading = -2,
+        EndGradingSubmission = -3,
+        BeginGradingSubmission = -2,
         CompilerNotFound = -1,
         Compiling = 0,
         CompileError = 1,
@@ -125,6 +126,16 @@ namespace Judge.Cores
             RemoveAllSubmission();
         }
 
+        public List<string> GetListUserNames()
+        {
+            return userModel.GetListUsernames();
+        }
+
+        public List<string> GetListProblemNames()
+        {
+            return problemModel.GetListProblemnames();
+        }
+
         public void StopGrade()
         {
             IsGrading = false;
@@ -134,7 +145,7 @@ namespace Judge.Cores
         {
             OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
             {
-                Event = JudgeGradingEventType.BeginGrading,
+                Event = JudgeGradingEventType.BeginGradingSubmission,
                 ProblemName = problemName,
                 UserName = userName
             });
@@ -382,7 +393,7 @@ namespace Judge.Cores
 
             //4. Clean
             CleanDirectory(currentDir);
-
+            OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent() { Event = JudgeGradingEventType.EndGradingSubmission });
             return totalScore;
         }
 
