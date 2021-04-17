@@ -76,11 +76,27 @@
                 "Value TEXT NOT NULL, " +
                 "PRIMARY KEY(Name) " +
             ");";
+            //TESTING
+            string CreateLanguageTimeGrading = "CREATE TABLE LanguageTimeGrading(" +
+                "[Name]  TEXT, " +
+                "[TimeGrading]   INTEGER NOT NULL " +
+            ");";
+            //END TEST
             using (SQLiteCommand command = new SQLiteCommand(connection))
             {
                 command.CommandText = CreateProblemsTable + CreateUsersTable +
                     CreateSubmissionsTable + CreateSubmissionTestcaseResultsTable +
-                    CreateSettingsTable;
+                    CreateSettingsTable + CreateLanguageTimeGrading;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void UpdateLanguageTimeGrading(string lang, int ms)
+        {
+            using (SQLiteCommand command = new SQLiteCommand("INSERT INTO LanguageTimeGrading([Name], [TimeGrading]) VALUES(@lang, @ms);", connection))
+            {
+                command.Parameters.Add(new SQLiteParameter("@lang", lang));
+                command.Parameters.Add(new SQLiteParameter("@ms", ms));
                 command.ExecuteNonQuery();
             }
         }

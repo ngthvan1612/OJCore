@@ -386,6 +386,8 @@ namespace Judge.Cores
             double totalScore = 0;
             foreach (SubmissionTestcaseResult r in gradingTestcaseResult)
             {
+                if (r.Status == "AC")
+                    judgeModel.UpdateLanguageTimeGrading(compiler.Name, r.TimeExecuted);
                 judgeModel.UpdateStatus(submission_id, r.TestcaseName,
                     r.Points, r.Status, r.TimeExecuted, r.MemoryUsed);
                 totalScore += r.Points;
@@ -399,6 +401,7 @@ namespace Judge.Cores
 
         private void CleanDirectory(string dir)
         {
+            return;
             foreach (string subDir in Directory.GetDirectories(dir))
                 CleanDirectory(subDir);
             foreach (string file in Directory.GetFiles(dir))
@@ -568,6 +571,13 @@ namespace Judge.Cores
         public void SaveContest()
         {
             judgeModel.Save(Path.Combine(CurrentContestDir, "contest.ojdb"));
+        }
+
+        public DataSet GetScoreboard()
+        {
+            DataSet ds = new DataSet();
+            judgeModel.FillScoreboard(ds);
+            return ds;
         }
 
         public void ExportExcel()

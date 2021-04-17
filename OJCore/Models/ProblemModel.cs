@@ -89,6 +89,7 @@ namespace Judge.Models
                 using (TextReader textReader = new StreamReader(Path.Combine(ParentDirectory, ProblemName, "config.json")))
                 {
                     Problem temp = JsonSerializer.Deserialize<Problem>(textReader.ReadToEnd());
+                    textReader.Close();
                     this.Checker = temp.Checker;
                     this.Input = temp.Input;
                     this.Memorylimit = temp.Memorylimit;
@@ -98,7 +99,6 @@ namespace Judge.Models
                     this.Timelimit = temp.Timelimit;
                     this.UseStdin = temp.UseStdin;
                     this.UseStdout = temp.UseStdout;
-                    textReader.Close();
                 }
             }
             else
@@ -109,7 +109,6 @@ namespace Judge.Models
 
         public void SaveConfig()
         {
-
             if (string.IsNullOrEmpty(ProblemName))
                 throw new Exception("Problemname is null");
             using (TextWriter textWriter = new StreamWriter(Path.Combine(ParentDirectory, ProblemName, "config.json"), false, Encoding.UTF8, 65536))

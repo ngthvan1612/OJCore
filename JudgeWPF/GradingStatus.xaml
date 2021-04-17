@@ -34,8 +34,13 @@
                 <ProgressBar
                         Style="{StaticResource MaterialDesignCircularProgressBar}"
                         IsIndeterminate="True" Margin="0, 0, 10, 0"/>
-                <ProgressBar x:Name="gradingProcess" Value="20" Width="300" Margin="0, 0, 10, 0"/>
-                <TextBlock Text="{Binding ElementName=gradingProcess, StringFormat='\{0\} %', Path=Value}"/>
+                <ProgressBar x:Name="gradingProcess"
+                             Value="20"
+                             Width="300"
+                             VerticalAlignment="Center"
+                             Margin="0, 0, 10, 0"/>
+                <TextBlock Text="{Binding ElementName=gradingProcess, StringFormat='\{0\} %', Path=Value}"
+                           VerticalAlignment="Center"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Style="{DynamicResource MaterialDesignRaisedButton}"

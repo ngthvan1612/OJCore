@@ -78,6 +78,16 @@ namespace JudgeWPF
                         scoreBoard.Items.Add(row);
                         usersMap.Add(users[i], i);
                     }
+
+                    DataTable sc = judger.GetScoreboard().Tables[0];
+                    for (int i = 0; i < sc.Rows.Count; ++i)
+                    {
+                        for (int j = 1; j < sc.Columns.Count - 1; ++j)
+                        {
+                            int uid = usersMap[Convert.ToString(sc.Rows[i][0])];
+                            (scoreBoard.Items[uid] as IDictionary<string, object>)[sc.Columns[j].ColumnName] = sc.Rows[i][j];
+                        }
+                    }
                 }
                 catch (JudgeDirectoryNotFoundException ex)
                 {
@@ -106,10 +116,9 @@ namespace JudgeWPF
 
         private void btnStartGrading_Click(object sender, RoutedEventArgs e)
         {
-            //listMessage.Items.Clear();
-            //judger.GradeAll();
             GradingStatus gs = new GradingStatus(judger);
             gs.ShowDialog();
+            judger.SaveContest();
         }
 
         private void btnStopGrading_Click(object sender, RoutedEventArgs e)
@@ -119,12 +128,17 @@ namespace JudgeWPF
 
         private void btnSaveContest_Click(object sender, RoutedEventArgs e)
         {
-
+            judger.SaveContest();
         }
 
         private void btnExportExcel_Click(object sender, RoutedEventArgs e)
         {
             judger.ExportExcel();
+        }
+
+        private void scoreBoard_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
         }
     }
 }

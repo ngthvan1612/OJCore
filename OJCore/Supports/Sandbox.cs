@@ -47,11 +47,9 @@ namespace Judge.Supports
             {
                 FileName = program,
                 Arguments = pargs,
-                UseShellExecute = false,
                 CreateNoWindow = true,
+                UseShellExecute = false,
                 WorkingDirectory = workdir,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
                 ErrorDialog = false
             };
 

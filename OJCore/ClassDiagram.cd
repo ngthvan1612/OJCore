@@ -15,7 +15,7 @@
       </Delegate>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAQAAACAAgABkWAAEgMAACgAAoAAAEAAQBQAAAEAgYA=</HashCode>
+      <HashCode>AAQAAACAIgABk2ABEgMAADgAAoAAAEAAQAQAAAEAgYA=</HashCode>
       <FileName>Cores\JudgeCore.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -37,7 +37,7 @@
   <Class Name="Judge.Models.JudgeModel" Collapsed="true">
     <Position X="10.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgIANAAJABgAAAABBAIEAACBZAIAAQAAEAAhAJAI=</HashCode>
+      <HashCode>AAAAgIAFAEJABgQAAAABAIEAACBRAIQAAAAAAApABAI=</HashCode>
       <FileName>Models\JudgeModel.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -58,7 +58,7 @@
   <Class Name="Judge.Models.ProblemModel" Collapsed="true">
     <Position X="4" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAgAAAAQgAACAAAgAAAAAAAACAAAAAAAAAQAAA=</HashCode>
+      <HashCode>AAQAAAAgAAAAQgAACAAAwAAAAAAAACAAAAAAAAAQAAA=</HashCode>
       <FileName>Models\ProblemModel.cs</FileName>
     </TypeIdentifier>
   </Class>
