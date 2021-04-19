@@ -13,12 +13,6 @@
     {
         private readonly SQLiteConnection connection;
 
-        public string ContestName
-        {
-            get => GetSetting("contest_name");
-            set => UpdateSetting("contest_name", value);
-        }
-
         public JudgeModel()
         {
             connection = new SQLiteConnection("Data Source=:memory:;Version=3;foreign keys=true;");
@@ -163,7 +157,7 @@
 
         public void RemoveAllSubmissions()
         {
-            using (SQLiteCommand command = new SQLiteCommand("DELETE FROM SubmissionTestcaseResults;", connection))
+            using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Submissions;", connection))
             {
                 command.ExecuteNonQuery();
             }
@@ -346,7 +340,9 @@
                 usersMap.Add(users[i], i);
             }
 
-            //List<double> totalScore = new List<double>(users.Count);
+            double[] totalScore = new double[users.Count];
+            for (int i = 0; i < users.Count; ++i)
+                totalScore[i] = 0;
 
             //Fill data
             for (int i = 0; i < submissions.Count; ++i)
@@ -354,7 +350,12 @@
                 int pid = problemsMap[submissions[i].ProblemName];
                 int uid = usersMap[submissions[i].UserName];
                 scoreBoard.Rows[uid][pid] = submissions[i].Points;
-                //scoreBoard.Rows[uid][scoreBoard.Columns.Count - 1] += submissions[i].Points;
+                totalScore[uid] += submissions[i].Points;
+            }
+            
+            for (int i = 0; i < users.Count; ++i)
+            {
+                scoreBoard.Rows[i][scoreBoard.Columns.Count - 1] = totalScore[i];
             }
 
             //Finish
@@ -362,18 +363,17 @@
             dataSet.Tables.Add(scoreBoard);
         }
 
-        public void RemoveSubmissionStatuses(string problemName, string userName)
+        public void RemoveSubmission(string problemName, string userName)
         {
-            string query = "DELETE FROM tbSubmissionTestcaseResults " +
-                "WHERE ROWID IN " +
+            string query = "DELETE FROM Submissions " +
+                "WHERE Submissions.ROWID IN " +
                 "( " +
-                    "SELECT tbSubmissionTestcaseResults.ROWID " +
-                    "FROM tbSubmissionTestcaseResults " +
-                    "INNER JOIN tbProblems " +
-                        "ON tbProblems.ID = tbSubmissionTestcaseResults.ProblemID " +
-                    "INNER JOIN tbUsers " +
-                        "ON tbUsers.ID = tbSubmissionTestcaseResults.UserID " +
-                    "WHERE tbProblems.ProblemName = @pname AND tbUsers.UserName = @uname " +
+                    "SELECT Submissions.ROWID FROM Submissions " +
+                    "INNER JOIN Problems " +
+                        "ON Problems.ID = Submissions.ProblemID " +
+                    "INNER JOIN Users " +
+                        "ON Users.ID = Submissions.UserID " +
+                    "WHERE Problems.ProblemName = @pname AND Users.UserName = @uname " +
             ");";
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {

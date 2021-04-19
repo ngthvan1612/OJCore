@@ -44,6 +44,7 @@ namespace JudgeWPF
                 });
                 listMessage.SelectedIndex = listMessage.Items.Count - 1;
                 listMessage.ScrollIntoView(listMessage.SelectedItem);
+                gradingProcess.Value = Math.Round(100.0 * judger.TestcasesGraded / judger.Totaltestcases, 2);
             });
         }
 

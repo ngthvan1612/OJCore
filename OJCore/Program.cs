@@ -7,16 +7,21 @@ using System;
 
 namespace Judge
 {
+    using Sys;
     using Cores;
     using Supports;
     using System.Drawing;
     using System.Threading;
     using System.Windows.Forms;
+    using System.Collections;
+    using System.Collections.Generic;
 
     public class Program
     {
         private static Judger judger;
         private static DateTime begin = DateTime.Now;
+
+        private static List<Form> listFrm = new List<Form>();
 
         private static Form frm;
 
@@ -35,18 +40,25 @@ namespace Judge
             {
                 Application.Run(frm);
             })).Start();
+            listFrm.Add(frm);
         }
 
         private static void SendData(string msg)
         {
-            var list = (frm.Controls[0] as ListBox);
-            if (list.InvokeRequired)
+            try
             {
-                list.Invoke(new Action(() => SendData(msg)));
-                return;
+                if (frm.IsDisposed)
+                    return;
+                var list = (frm.Controls[0] as ListBox);
+                if (list.InvokeRequired)
+                {
+                    list.Invoke(new Action(() => SendData(msg)));
+                    return;
+                }
+                list.Items.Add(msg);
+                list.TopIndex = list.Items.Count - 1;
             }
-            list.Items.Add(msg);
-            list.TopIndex = list.Items.Count - 1;
+            catch { return; }
         }
 
         private static void CloseFrm()
@@ -62,8 +74,8 @@ namespace Judge
         [STAThread]
         public static void Main(string[] args)
         {
-            judger = new Judger(@"C:\Users\Nguyen Van\temp_judge");
-            judger.LoadContestDirectory(@"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01");
+            judger = new Judger();
+            judger.LoadContest(@"C:\Users\Nguyen Van\Source\Repos\OJCore\TestModule\Test01");
             judger.OnGradeStatusChanged += Judger_OnGradeStatusChanged; ;
             while (true)
             {
@@ -101,7 +113,15 @@ namespace Judge
                 {
                     judger.SaveContest();
                 }
+                else if (cmd == "test")
+                {
+                    //Console.WriteLine("Application directory = {0}", FS.JudgeAppDataDirectory);
+                    Console.WriteLine("Temp directory = {0}", FS.JudgeTempDirectory);
+                    Console.WriteLine("Workspace directory = {0}", FS.JudgeWorkspace);
+                }
             }
+            foreach (Form frm in listFrm)
+                frm.Invoke(new Action(() => { frm.Close(); }));
         }
 
         private static void Judger_OnGradeStatusChanged(object sender, JudgeGradingEvent args)

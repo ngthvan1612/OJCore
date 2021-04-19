@@ -5,16 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JudgeWPF"
         mc:Ignorable="d"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         WindowStartupLocation="CenterScreen"
         Closing="Window_Closing"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}"
         Title="GradingStatus" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -25,31 +21,32 @@
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <DockPanel DockPanel.Dock="Top" Grid.Row="0">
-            <ListBox x:Name="listMessage">
+            <ListBox x:Name="listMessage"
+                     FontSize="15">
 
             </ListBox>
         </DockPanel>
         <StackPanel Grid.Row="1">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <ProgressBar
-                        Style="{StaticResource MaterialDesignCircularProgressBar}"
-                        IsIndeterminate="True" Margin="0, 0, 10, 0"/>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                 <ProgressBar x:Name="gradingProcess"
-                             Value="20"
+                             Value="0"
                              Width="300"
+                             Height="5"
                              VerticalAlignment="Center"
-                             Margin="0, 0, 10, 0"/>
+                             FontSize="15"
+                             Margin="0, 5, 5, 0"/>
                 <TextBlock Text="{Binding ElementName=gradingProcess, StringFormat='\{0\} %', Path=Value}"
+                           HorizontalAlignment="Center"
+                           FontSize="15"
                            VerticalAlignment="Center"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Style="{DynamicResource MaterialDesignRaisedButton}"
-                            x:Name="btnStopGrading"
-                            Click="btnStopGrading_Click"
-                            Margin="0, 4, 2, 4">
+                <Button
+                    x:Name="btnStopGrading"
+                    Click="btnStopGrading_Click"
+                    Margin="0, 4, 2, 4">
                     <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="MarkerCancel" Margin="0, 0, 2, 0"/>
-                        <TextBlock Text="Stop grading" />
+                        <TextBlock Text="Stop grading" FontSize="15" Margin="5"/>
                     </StackPanel>
                 </Button>
             </StackPanel>

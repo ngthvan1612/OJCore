@@ -141,7 +141,11 @@ namespace Judge.Models
             return problemsMap.ContainsKey(problemName.ToLower());
         }
 
-        public Problem this[string problemName] => problemsMap[problemName.ToLower()];
+        public Problem this[string problemName]
+        {
+            get => problemsMap[problemName.ToLower()];
+            set => problemsMap[problemName.ToLower()] = value;
+        }
 
         public void SaveConfig(string problemName)
         {

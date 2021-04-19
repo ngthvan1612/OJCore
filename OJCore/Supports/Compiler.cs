@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Judge.Sys;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -89,20 +90,51 @@ namespace Judge.Supports
             return null;
         }
 
+        public void CreateNewCompiler(Compiler compiler)
+        {
+            if (this.Contains(compiler.Extention.ToLower()))
+                throw new System.Exception(string.Format("Compiler for {0} is existed", compiler.Extention));
+            compilersMap.Add(compiler.Extention.ToLower(), compiler);
+        }
+
+        public void RemoveCompiler(string extension)
+        {
+            extension = extension.ToLower();
+            if (this.Contains(extension))
+                compilersMap.Remove(extension);
+        }
+
         private void LoadCompilerConfig()
         {
-            using (TextReader textReader = new StreamReader("compilers.json"))
+            if (FS.FileExist(FS.JudgeCompilerConfig))
             {
-                List<Compiler> compilers = JsonSerializer.Deserialize<List<Compiler>>(textReader.ReadToEnd());
-                textReader.Close();
-                compilersMap.Clear();
-                for (int i = 0; i < compilers.Count; ++i)
+                using (TextReader textReader = new StreamReader(FS.JudgeCompilerConfig))
                 {
-                    compilers[i].Extention = compilers[i].Extention.ToLower(); //mark
-                    compilersMap[compilers[i].Extention.ToLower()] = compilers[i];
+                    List<Compiler> compilers = JsonSerializer.Deserialize<List<Compiler>>(textReader.ReadToEnd());
+                    textReader.Close();
+                    compilersMap.Clear();
+                    for (int i = 0; i < compilers.Count; ++i)
+                    {
+                        compilers[i].Extention = compilers[i].Extention.ToLower(); //mark
+                        compilersMap[compilers[i].Extention.ToLower()] = compilers[i];
+                    }
                 }
             }
+            else
+            {
+                compilersMap.Clear();
+                SaveCompilerConfig();
+            }
             Log.print(LogType.Info, "Loaded compiler config");
+        }
+        
+        public void SaveCompilerConfig()
+        {
+            using (TextWriter textWriter = new StreamWriter(FS.JudgeCompilerConfig))
+            {
+                textWriter.WriteLine(this.ToString());
+                textWriter.Close();
+            }
         }
 
         public override string ToString()

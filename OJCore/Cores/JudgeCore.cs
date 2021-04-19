@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Judge.Cores
 {
+    using Sys;
     using Exceptions;
     using Models;
     using Supports;
     using System.Data;
-    using System.IO;
     using System.Threading;
 
     public enum JudgeGradingEventType
@@ -62,6 +62,8 @@ namespace Judge.Cores
         private readonly Checker checker;
 
         private readonly string workSpace;
+        public int Totaltestcases { get; private set; } = 0;
+        public int TestcasesGraded { get; private set; } = 0;
 
         private object _IsGrading = false;
         public bool IsGrading
@@ -82,7 +84,7 @@ namespace Judge.Cores
             }
         }
 
-        public Judger(string workSpace)
+        public Judger()
         {
             sandbox = new Sandbox();
             problemModel = new ProblemModel();
@@ -90,7 +92,14 @@ namespace Judge.Cores
             judgeModel = new JudgeModel();
             compilerManager = new CompilerManager();
             checker = new Checker();
-            this.workSpace = workSpace;
+            this.workSpace = FS.JudgeWorkspace;
+        }
+
+        #region Load Contest (Problem & User directory)
+
+        private void RemoveAllSubmission()
+        {
+            judgeModel.RemoveAllSubmissions();
         }
 
         private void LoadProblemsDirectory(string dir)
@@ -107,11 +116,6 @@ namespace Judge.Cores
             RemoveAllSubmission();
         }
 
-        private void RemoveAllSubmission()
-        {
-            judgeModel.RemoveAllSubmissions();
-        }
-
         private void LoadUsersDirectory(string dir)
         {
             if (IsGrading)
@@ -126,15 +130,60 @@ namespace Judge.Cores
             RemoveAllSubmission();
         }
 
-        public List<string> GetListUserNames()
+        public List<string> GetListUsers()
         {
             return userModel.GetListUsernames();
         }
 
-        public List<string> GetListProblemNames()
+        public List<string> GetListProblems()
         {
             return problemModel.GetListProblemnames();
         }
+
+        public void LoadContest(string dir)
+        {
+            string problemDir = FS.Combine(dir, "Problems");
+            if (!FS.DirectoryExist(problemDir))
+                throw new JudgeDirectoryNotFoundException(problemDir);
+            string userDir = FS.Combine(dir, "Users");
+            if (!FS.DirectoryExist(userDir))
+                throw new JudgeDirectoryNotFoundException(userDir);
+            LoadProblemsDirectory(problemDir);
+            LoadUsersDirectory(userDir);
+            string offlineJudgeDBFile = FS.Combine(dir, "contest.ojdb");
+            if (!FS.FileExist(offlineJudgeDBFile))
+            {
+                judgeModel.Save(offlineJudgeDBFile);
+            }
+            else
+            {
+                judgeModel.Load(offlineJudgeDBFile);
+            }
+            CurrentContestDir = dir;
+        }
+
+        public void SaveContest()
+        {
+            judgeModel.Save(FS.Combine(CurrentContestDir, "contest.ojdb"));
+        }
+
+        #endregion
+
+        #region Modify problems
+
+        public Problem GetProblemByName(string problemName)
+        {
+            return problemModel[problemName];
+        }
+
+        public void UpdateProblemSetting(Problem problem)
+        {
+            problemModel[problem.ProblemName] = problem;
+        }
+
+        #endregion
+
+        #region Grade
 
         public void StopGrade()
         {
@@ -143,6 +192,14 @@ namespace Judge.Cores
 
         private double GradeOneSubmission(string problemName, string userName)
         {
+            if (string.IsNullOrEmpty(CurrentContestDir))
+                throw new Exception("No contest openned");
+
+            int total = problemModel[problemName].Testcases.Count;
+
+            //Remove old submission
+            judgeModel.RemoveSubmission(problemName, userName);
+
             OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
             {
                 Event = JudgeGradingEventType.BeginGradingSubmission,
@@ -162,11 +219,12 @@ namespace Judge.Cores
                     UserName = userName,
                     ProblemName = problemName
                 });
+                TestcasesGraded += total;
                 return 0;
             }
             //check again before copy submission to workspace
-            string userSourceCode = Path.Combine(userModel.UserDirectory, userName, submission.ToString());
-            if (!File.Exists(userSourceCode))
+            string userSourceCode = FS.Combine(userModel.UserDirectory, userName, submission.ToString());
+            if (!FS.FileExist(userSourceCode))
             {
                 //Submission not found
                 OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
@@ -175,24 +233,25 @@ namespace Judge.Cores
                     UserName = userName,
                     ProblemName = problemName
                 });
+                TestcasesGraded += total;
                 return 0;
             }
 
             //--------------- make directory
-            string currentDir = Path.Combine(workSpace, DateTime.Now.Ticks.ToString());
-            string currentUserDir = Path.Combine(currentDir, user.UserName);
-            string currentProblemDir = Path.Combine(currentDir, problem.ProblemName);
-            string inputRun = Path.Combine(currentProblemDir, "input.txt");
+            string currentDir = FS.Combine(workSpace, DateTime.Now.Ticks.ToString());
+            string currentUserDir = FS.Combine(currentDir, user.UserName);
+            string currentProblemDir = FS.Combine(currentDir, problem.ProblemName);
+            string inputRun = FS.Combine(currentProblemDir, "input.txt");
 
-            Directory.CreateDirectory(currentDir);
-            Directory.CreateDirectory(currentUserDir);
-            Directory.CreateDirectory(currentProblemDir);
-            File.Create(inputRun).Dispose();
+            FS.CreateDirectory(currentDir);
+            FS.CreateDirectory(currentUserDir);
+            FS.CreateDirectory(currentProblemDir);
+            FS.CreateEmptyFile(inputRun);
 
             //--------------- compile
             ///1. copy source code to workspace
-            string newSource = Path.Combine(currentUserDir, submission.ToString());
-            File.Copy(userSourceCode, newSource, true);
+            string newSource = FS.Combine(currentUserDir, submission.ToString());
+            FS.CopyFile(userSourceCode, newSource);
 
             ///2. compile
             ///2.1. Find compiler
@@ -205,7 +264,8 @@ namespace Judge.Cores
                     UserName = userName,
                     ProblemName = problemName
                 });
-                CleanDirectory(currentDir);
+                TestcasesGraded += total;
+                FS.DeleteDirectory(currentDir);
                 return 0;
             }
             Compiler compiler = compilerManager[submission.Extension];
@@ -228,12 +288,14 @@ namespace Judge.Cores
                     UserName = userName,
                     ProblemName = problemName
                 });
-                CleanDirectory(currentDir);
+                TestcasesGraded += total;
+                FS.DeleteDirectory(currentDir);
                 return 0;
             }
             if (!IsGrading)
             {
-                CleanDirectory(currentDir);
+                FS.DeleteDirectory(currentDir);
+                TestcasesGraded += total;
                 return 0;
             }
 
@@ -245,23 +307,23 @@ namespace Judge.Cores
             foreach (Testcase test in problem.Testcases)
             {
                 OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent() { Event = JudgeGradingEventType.BeginRunTest });
-                string currentTestDir = Path.Combine(currentProblemDir, test.TestcaseName);
-                string sourceInput = Path.Combine(problem.ParentDirectory, problem.ProblemName, test.TestcaseName, problem.Input);
-                string sourceOutput = Path.Combine(problem.ParentDirectory, problem.ProblemName, test.TestcaseName, problem.Output);
-                string destOutput = Path.Combine(currentTestDir, problem.Output);
+                string currentTestDir = FS.Combine(currentProblemDir, test.TestcaseName);
+                string sourceInput = FS.Combine(problem.ParentDirectory, problem.ProblemName, test.TestcaseName, problem.Input);
+                string sourceOutput = FS.Combine(problem.ParentDirectory, problem.ProblemName, test.TestcaseName, problem.Output);
+                string destOutput = FS.Combine(currentTestDir, problem.Output);
 
                 //create testcase directory
-                Directory.CreateDirectory(currentTestDir);
+                FS.CreateDirectory(currentTestDir);
 
                 //copy execute
-                File.Copy(Path.Combine(currentUserDir, compileResult.OutputFileName),
-                    Path.Combine(currentTestDir, compileResult.OutputFileName), true);
+                FS.CopyFile(FS.Combine(currentUserDir, compileResult.OutputFileName),
+                    FS.Combine(currentTestDir, compileResult.OutputFileName));
 
                 //copy input
                 if (!problem.UseStdin)
                 {
-                    string destInput = Path.Combine(currentTestDir, problem.Input);
-                    File.Copy(sourceInput, destInput, true);
+                    string destInput = FS.Combine(currentTestDir, problem.Input);
+                    FS.CopyFile(sourceInput, destInput);
                 }
 
                 //run
@@ -280,9 +342,12 @@ namespace Judge.Cores
 
                 if (!IsGrading)
                 {
-                    CleanDirectory(currentDir);
+                    TestcasesGraded += total;
+                    FS.DeleteDirectory(currentDir);
                     return 0;
                 }
+                TestcasesGraded++;
+                total--;
 
                 string grading_status = running_status.Status.ToString();
                 double points = 0.0;
@@ -342,7 +407,7 @@ namespace Judge.Cores
                 else
                 {
                     //if run ok -> copy output & rename
-                    File.Copy(sourceOutput, destOutput + "$", true);
+                    FS.CopyFile(sourceOutput, destOutput + "$");
 
                     //check result
                     bool checker_result = checker.Compare(problem.Checker, problem.Output, problem.Output + "$", currentTestDir);
@@ -394,22 +459,9 @@ namespace Judge.Cores
             }
 
             //4. Clean
-            CleanDirectory(currentDir);
+            FS.DeleteDirectory(currentDir);
             OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent() { Event = JudgeGradingEventType.EndGradingSubmission });
             return totalScore;
-        }
-
-        private void CleanDirectory(string dir)
-        {
-            return;
-            foreach (string subDir in Directory.GetDirectories(dir))
-                CleanDirectory(subDir);
-            foreach (string file in Directory.GetFiles(dir))
-            {
-                File.SetAttributes(file, FileAttributes.Normal);
-                File.Delete(file);
-            }
-            Directory.Delete(dir);
         }
 
         public void GradeSubmission(string problemName, string userName)
@@ -515,6 +567,10 @@ namespace Judge.Cores
                 IsGrading = true;
                 List<string> users = userModel.GetListUsernames();
                 List<string> problems = problemModel.GetListProblemnames();
+                Totaltestcases = TestcasesGraded = 0;
+                for (int i = 0; i < problems.Count; ++i)
+                    Totaltestcases += problemModel[problems[i]].Testcases.Count;
+                Totaltestcases *= users.Count;
                 for (int i = 0; i < users.Count; ++i)
                 {
                     for (int j = 0; j < problems.Count; ++j)
@@ -545,33 +601,9 @@ namespace Judge.Cores
             })).Start();
         }
 
-        public void LoadContestDirectory(string dir)
-        {
-            string problemDir = Path.Combine(dir, "Problems");
-            if (!Directory.Exists(problemDir))
-                throw new JudgeDirectoryNotFoundException(problemDir);
-            string userDir = Path.Combine(dir, "Users");
-            if (!Directory.Exists(userDir))
-                throw new JudgeDirectoryNotFoundException(userDir);
-            LoadProblemsDirectory(problemDir);
-            LoadUsersDirectory(userDir);
-            string offlineJudgeDBFile = Path.Combine(dir, "contest.ojdb");
-            if (!File.Exists(offlineJudgeDBFile))
-            {
-                judgeModel.Save(offlineJudgeDBFile);
-            }
-            else
-            {
-                File.SetAttributes(offlineJudgeDBFile, FileAttributes.Normal);
-                judgeModel.Load(offlineJudgeDBFile);
-            }
-            CurrentContestDir = dir;
-        }
+        #endregion
 
-        public void SaveContest()
-        {
-            judgeModel.Save(Path.Combine(CurrentContestDir, "contest.ojdb"));
-        }
+        #region Scoreboard
 
         public DataSet GetScoreboard()
         {
@@ -590,9 +622,10 @@ namespace Judge.Cores
             })).Start();
         }
 
+        #endregion
         ~Judger()
         {
-            Console.WriteLine("bye");
+            FS.DeleteDirectory(FS.JudgeTempDirectory);
         }
     }
 }

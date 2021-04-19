@@ -102,8 +102,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Databases\IJudgeDB.cs" />
     <Compile Include="Exceptions\JudgeException.cs" />
     <Compile Include="Cores\JudgeCore.cs" />
+    <Compile Include="Sys\FS.cs" />
     <Compile Include="Models\JudgeModel.cs" />
     <Compile Include="Models\SubmissionTestcaseResultModel.cs" />
     <Compile Include="Models\SubmissionModel.cs" />

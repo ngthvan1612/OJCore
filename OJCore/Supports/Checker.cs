@@ -1,6 +1,6 @@
 ﻿namespace Judge.Supports
 {
-    public class Checker
+    internal class Checker
     {
         private Sandbox sandbox;
 

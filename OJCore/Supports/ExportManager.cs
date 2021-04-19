@@ -4,7 +4,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Judge.Supports
 {
-    public class ExportManager
+    internal class ExportManager
     {
         //Fast export
         //Use Binary Search Tree (SortedList<,>)

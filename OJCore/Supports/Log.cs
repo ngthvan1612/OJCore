@@ -1,18 +1,19 @@
 ﻿namespace Judge.Supports
 {
     using System;
-    public enum LogType
+
+    internal enum LogType
     {
         Info,
         Warning,
         Error
     }
 
-    public class Log
+    internal class Log
     {
         public static void print(LogType type, string format, params object[] args)
         {
-            return;
+            //return;
             var tmp = Console.ForegroundColor;
             if (type == LogType.Info)
             {
