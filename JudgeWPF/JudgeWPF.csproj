@@ -95,10 +95,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ProblemDetail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ProblemConfigEdit.xaml.cs">
       <DependentUpon>ProblemConfigEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProblemDetail.xaml.cs">
+      <DependentUpon>ProblemDetail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -132,6 +139,21 @@
       <Project>{93095f4a-8576-4d38-9562-16e1ba3d576d}</Project>
       <Name>Judge</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\WinMainIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\legal_law_justice_balance_court_judge_icon-icons.com_55992.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="WinMainIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\legal_law_justice_balance_court_judge_icon-icons.com_55992.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="legal_law_justice_balance_court_judge_icon-icons.com_55992.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

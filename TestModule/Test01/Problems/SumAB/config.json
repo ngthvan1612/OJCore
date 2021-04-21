@@ -3,7 +3,7 @@
   "Output": "SumAB.OUT",
   "UseStdin": true,
   "UseStdout": true,
-  "Timelimit": 500,
+  "Timelimit": 5000,
   "Memorylimit": 2000,
   "Checker": "c:/windows/system32/fc.exe",
   "ProblemType": "ACM",

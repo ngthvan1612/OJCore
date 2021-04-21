@@ -78,13 +78,13 @@
             {
                 sb.Append(path[i]);
                 if (path[i].Length != 0)
-                if (i != path.Length - 1)
-                {
-                    if (path[i][path[i].Length - 1] != '\\')
+                    if (i != path.Length - 1)
                     {
-                        sb.Append('\\');
+                        if (path[i][path[i].Length - 1] != '\\')
+                        {
+                            sb.Append('\\');
+                        }
                     }
-                }
             }
             return sb.ToString();
         }

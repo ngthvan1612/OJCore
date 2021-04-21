@@ -130,14 +130,19 @@ namespace Judge.Cores
             RemoveAllSubmission();
         }
 
-        public List<string> GetListUsers()
+        public List<string> GetListUserName()
         {
             return userModel.GetListUsernames();
         }
 
-        public List<string> GetListProblems()
+        public List<string> GetListProblemName()
         {
             return problemModel.GetListProblemnames();
+        }
+
+        public List<Problem> GetProblems()
+        {
+            return problemModel.GetProblems();
         }
 
         public void LoadContest(string dir)

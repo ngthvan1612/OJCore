@@ -11,7 +11,7 @@
         TextOptions.TextRenderingMode="Auto"
         WindowStartupLocation="CenterScreen"
         Closing="Window_Closing"
-        Title="GradingStatus" Height="450" Width="800">
+        Title="Status" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>

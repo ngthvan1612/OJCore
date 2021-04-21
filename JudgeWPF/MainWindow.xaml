@@ -6,14 +6,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JudgeWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1000"
+        Title="UTE Judge (Test)" Height="600" Width="1000"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
-        Unloaded="Window_Unloaded">
+        Unloaded="Window_Unloaded" Icon="legal_law_justice_balance_court_judge_icon-icons.com_55992.png">
     <Window.Resources>
         <Style x:Key="mainMenuTop" TargetType="MenuItem">
             <Setter Property="Height" Value="Auto"/>
@@ -27,7 +27,7 @@
             <Setter Property="Height" Value="Auto"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="15px"/>
-            <Setter Property="Foreground" Value="Blue" />
+            <Setter Property="Foreground" Value="Orange" />
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
         </Style>
         <Style x:Key="dataGridColumnHeader_Problem" TargetType="DataGridColumnHeader">
@@ -86,6 +86,8 @@
 
                     </MenuItem>
                     <MenuItem Header="Xuất file excel"
+                              x:Name="menuExportExcel"
+                              Click="menuExportExcel_Click"
                               Style="{StaticResource mainMenuSub}">
 
                     </MenuItem>
@@ -95,13 +97,21 @@
                               Style="{StaticResource mainMenuSub}">
 
                     </MenuItem>
+                    
+                    <MenuItem Header="Thiết đặt các vấn đề"
+                              x:Name="menuProblemSettings"
+                              Click="menuProblemSettings_Click"
+                              Style="{StaticResource mainMenuSub}">
+                        
+                    </MenuItem>
+                    
                     <MenuItem Header="Hệ thống chấm bài"
                               Style="{StaticResource mainMenuSub}">
 
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Hỗ trợ"  Style="{StaticResource mainMenuTop}">
-                    <MenuItem Header="HDSD"
+                    <MenuItem Header="Hướng dẫn sử dụng"
                               Style="{StaticResource mainMenuSub}">
 
                     </MenuItem>
@@ -116,8 +126,8 @@
                     <TabItem>
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Scoreboard"
-                                           FontSize="15"
+                                <TextBlock Text="Bảng điểm"
+                                           FontSize="16"
                                            Foreground="Red"
                                            FontFamily="Arial"/>
                             </StackPanel>
@@ -135,6 +145,7 @@
                                   ColumnWidth="*"
                                   SelectionUnit="Cell"
                                   SelectionMode="Single"
+                                  TextBlock.TextAlignment="Center"
                                   SelectionChanged="scoreBoard_SelectionChanged"
                             >
                             <DataGrid.Columns>
