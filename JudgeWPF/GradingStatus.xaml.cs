@@ -31,7 +31,7 @@ namespace JudgeWPF
             judger.GradeAll();
         }
 
-        private void SendData(string msg, Brush color)
+        private void SendData(string msg, Brush color, bool centerAndBold = false)
         {
             Dispatcher.Invoke(() =>
             {
@@ -40,7 +40,8 @@ namespace JudgeWPF
                     Text = msg,
                     Foreground = color,
                     FontFamily = new FontFamily("Arial"),
-                    FontSize = 17
+                    FontSize = 17,
+                    HorizontalAlignment = (centerAndBold ? HorizontalAlignment.Center : HorizontalAlignment.Left)
                 });
                 listMessage.SelectedIndex = listMessage.Items.Count - 1;
                 listMessage.ScrollIntoView(listMessage.SelectedItem);
@@ -53,8 +54,8 @@ namespace JudgeWPF
             switch (args.Event)
             {
                 case JudgeGradingEventType.EndRunTest:
-                    SendData(string.Format("{0}.{1}.{2} => [{3}, {4}, {5}ms]", args.UserName, args.ProblemName,
-                    args.TestCaseName, args.Status, args.Points, args.TimeExecuted), Brushes.Black);
+                    SendData(string.Format("{0}.{1}.{2} => [{3}, {4}, {5}ms, {6}KB]", args.UserName, args.ProblemName,
+                    args.TestCaseName, args.Status, args.Points, args.TimeExecuted, args.MemoryUsed), Brushes.Black);
                     break;
                 case JudgeGradingEventType.Complete:
                     AllowClose = true;
@@ -77,7 +78,7 @@ namespace JudgeWPF
                     SendData("Submission not found", Brushes.Brown);
                     break;
                 case JudgeGradingEventType.BeginGradingSubmission:
-                    SendData(string.Format("Start grade... [user: '{0}', problem: '{1}']", args.UserName, args.ProblemName), Brushes.Orange);
+                    SendData(string.Format("Start grade... [user: '{0}', problem: '{1}']", args.UserName, args.ProblemName), Brushes.Orange, true);
                     break;
                 case JudgeGradingEventType.CompilerNotFound:
                     SendData(string.Format("Compiler not found for {0}", args.Status), Brushes.IndianRed);

@@ -39,6 +39,19 @@ namespace JudgeWPF
             }
         }
 
+        public static readonly DependencyProperty CheckerProperty
+            = DependencyProperty.Register("Checker", typeof(string), typeof(MainWindow),
+            new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public string Checker
+        {
+            get => (string)GetValue(CheckerProperty);
+            set
+            {
+                SetValue(CheckerProperty, value);
+                tbChecker.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
+            }
+        }
+
         public static readonly DependencyProperty OutputProperty
             = DependencyProperty.Register("Output", typeof(string), typeof(MainWindow),
             new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
@@ -118,11 +131,6 @@ namespace JudgeWPF
             source = problem;
         }
 
-        public List<Testcase> Test()
-        {
-            return listTestcases.ItemsSource as List<Testcase>;
-        }
-
         private void mainControl_Loaded(object sender, RoutedEventArgs e)
         {
             Input = source.Input;
@@ -131,7 +139,18 @@ namespace JudgeWPF
             UseStdout = source.UseStdout;
             Memlimit = source.Memorylimit.ToString();
             Timelimit = source.Timelimit.ToString();
-            listTestcases.ItemsSource = source.Testcases;
+            listTestcases.ItemsSource = null;
+            List<Testcase> tmptestcases = new List<Testcase>();
+            source.Testcases.ForEach((item) =>
+            {
+                tmptestcases.Add(new Testcase()
+                {
+                    Point = item.Point,
+                    TestcaseName = item.TestcaseName
+                });
+            });
+            listTestcases.ItemsSource = tmptestcases;
+            Checker = source.Checker;
         }
 
         private static readonly Regex _regex = new Regex("[^0-9.]+$");
@@ -139,6 +158,24 @@ namespace JudgeWPF
         private void tbPreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = _regex.IsMatch(e.Text);
+        }
+
+        public Problem GetProblem()
+        {
+            return new Problem()
+            {
+                ProblemName = source.ProblemName,
+                Input = this.Input,
+                Output = this.Output,
+                UseStdin = this.UseStdin,
+                UseStdout = this.UseStdout,
+                Memorylimit = Convert.ToInt32(this.Memlimit),
+                Timelimit = Convert.ToInt32(this.Timelimit),
+                Checker = this.Checker,
+                Testcases = listTestcases.ItemsSource as List<Testcase>,
+                ParentDirectory = source.ParentDirectory,
+                ProblemType = source.ProblemType
+            };
         }
     }
 }

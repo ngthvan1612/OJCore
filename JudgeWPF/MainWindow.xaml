@@ -137,6 +137,8 @@
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   CanUserDeleteRows="False"
+                                  HeadersVisibility="All"
+                                  RowHeaderWidth="200"
                                   CanUserAddRows="False"
                                   CanUserResizeRows="False"
                                   CanUserResizeColumns="False"
@@ -148,20 +150,6 @@
                                   TextBlock.TextAlignment="Center"
                                   SelectionChanged="scoreBoard_SelectionChanged"
                             >
-                            <DataGrid.Columns>
-                                <DataGridTextColumn
-                                    Header="User"
-                                    HeaderStyle="{StaticResource dataGridColumnHeader_User}">
-                                </DataGridTextColumn>
-                                <DataGridTextColumn
-                                    Header="SumAB"
-                                    HeaderStyle="{StaticResource dataGridColumnHeader_Problem}">
-                                </DataGridTextColumn>
-                                <DataGridTextColumn
-                                    Header="MulAB"
-                                    HeaderStyle="{StaticResource dataGridColumnHeader_Problem}">
-                                </DataGridTextColumn>
-                            </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
                 </TabControl>

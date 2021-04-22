@@ -10,6 +10,7 @@ namespace Judge.Models
     using System.Text;
     using System.Text.Json;
     using System.Text.Json.Serialization;
+    using System.Windows.Forms;
 
     public class Testcase
     {
@@ -32,10 +33,10 @@ namespace Judge.Models
         public string Output { get; set; }
 
         [JsonPropertyName("UseStdin")]
-        public bool UseStdin { get; set; } = false;
+        public bool UseStdin { get; set; } = true;
 
         [JsonPropertyName("UseStdout")]
-        public bool UseStdout { get; set; } = false;
+        public bool UseStdout { get; set; } = true;
 
         [JsonPropertyName("Timelimit")]
         public int Timelimit { get; set; } = 1000; //miliseconds
@@ -60,8 +61,8 @@ namespace Judge.Models
 
         public Problem(string parent, string probName)
         {
-            ProblemName = probName;
             ParentDirectory = parent;
+            ProblemName = probName;
         }
 
         private void CreateDefaultConfig()
@@ -109,8 +110,6 @@ namespace Judge.Models
 
         public void SaveConfig()
         {
-            if (string.IsNullOrEmpty(ProblemName))
-                throw new Exception("Problemname is null");
             using (TextWriter textWriter = new StreamWriter(Path.Combine(ParentDirectory, ProblemName, "config.json"), false, Encoding.UTF8, 65536))
             {
                 textWriter.Write(this.ToString());
@@ -150,6 +149,15 @@ namespace Judge.Models
         public void SaveConfig(string problemName)
         {
             this[problemName].SaveConfig();
+        }
+
+        public void Update(List<Problem> problems)
+        {
+            for (int i = 0; i < problems.Count; ++i)
+            {
+                this[problems[i].ProblemName] = problems[i];
+            }
+            this.SaveAllConfigs();
         }
 
         public void SaveAllConfigs()

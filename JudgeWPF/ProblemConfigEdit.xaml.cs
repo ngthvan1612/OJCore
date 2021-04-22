@@ -20,7 +20,7 @@ namespace JudgeWPF
     /// </summary>
     public partial class ProblemConfigEdit : Window
     {
-        private List<Problem> Problems;
+        public List<Problem> Problems { get; set; }
 
         public ProblemConfigEdit(List<Problem> problems)
         {
@@ -30,23 +30,19 @@ namespace JudgeWPF
 
         private void btnExitWithoutSaving_Click(object sender, RoutedEventArgs e)
         {
-            //this.DialogResult = false;
-            //this.Close();
+            this.DialogResult = false;
+            this.Close();
         }
 
         private void btnSaveConfig_Click(object sender, RoutedEventArgs e)
         {
-            //this.DialogResult = true;
-            TabItem item = problemsTab.Items[0] as TabItem;
-            ProblemDetail detail = item.Content as ProblemDetail;
-            MessageBox.Show(detail.Input + "\n" +
-                detail.UseStdin.ToString() + "\n"+
-                detail.Output + "\n"+
-                detail.UseStdout.ToString() + "\n"+
-                detail.Memlimit + "\n" + 
-                detail.Timelimit + "\n"+
-                detail.Test()[0].Point.ToString());
-            //this.Close();
+            this.DialogResult = true;
+            Problems.Clear();
+            for (int i = 0; i < problemsTab.Items.Count; ++i)
+            {
+                Problems.Add(((problemsTab.Items[i] as TabItem).Content as ProblemDetail).GetProblem());
+            }
+            this.Close();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

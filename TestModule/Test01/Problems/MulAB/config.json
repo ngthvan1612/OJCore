@@ -4,7 +4,7 @@
   "UseStdin": true,
   "UseStdout": true,
   "Timelimit": 1000,
-  "Memorylimit": 400,
+  "Memorylimit": 16384,
   "Checker": "c:/windows/system32/fc.exe",
   "ProblemType": "OI",
   "Testcases": [

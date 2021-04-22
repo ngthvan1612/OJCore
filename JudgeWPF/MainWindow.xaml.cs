@@ -22,6 +22,7 @@ using System.Collections.Specialized;
 using System.Dynamic;
 using System.Reflection.Emit;
 using System.Reflection;
+using Judge.Models;
 
 namespace JudgeWPF
 {
@@ -57,21 +58,9 @@ namespace JudgeWPF
             (scoreBoard.Items[uid] as IDictionary<string, object>)[args.ProblemName] = args.Points.ToString("0.00");
         }
 
-        private void btnStartGrading_Click(object sender, RoutedEventArgs e)
-        {
-            GradingStatus gs = new GradingStatus(judger);
-            gs.ShowDialog();
-            judger.SaveContest();
-        }
-
         private void btnStopGrading_Click(object sender, RoutedEventArgs e)
         {
             judger.StopGrade();
-        }
-
-        private void btnSaveContest_Click(object sender, RoutedEventArgs e)
-        {
-            judger.SaveContest();
         }
 
         private void btnExportExcel_Click(object sender, RoutedEventArgs e)
@@ -88,7 +77,7 @@ namespace JudgeWPF
         {
             GradingStatus gs = new GradingStatus(judger);
             gs.ShowDialog();
-            judger.SaveContest();
+            //judger.SaveContest();
         }
 
         private void menuOpenContest_Click(object sender, RoutedEventArgs e)
@@ -166,7 +155,7 @@ namespace JudgeWPF
             ProblemConfigEdit frm = new ProblemConfigEdit(judger.GetProblems());
             if (frm.ShowDialog() == true)
             {
-                MessageBox.Show("OK");
+                judger.UpdateProblem(frm.Problems);
             }
         }
     }

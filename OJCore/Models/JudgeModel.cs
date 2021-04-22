@@ -312,7 +312,7 @@
             return result;
         }
 
-        public void FillScoreboard(DataSet dataSet)
+        public void FillScoreboard(DataSet dataSet, double DefaultValueIfNull = 0.0)
         {
             //Init
             DeleteAllDuplicateSubmissions();
@@ -328,7 +328,7 @@
             for (int i = 0; i < problems.Count; ++i)
             {
                 scoreBoard.Columns.Add(problems[i]);
-                scoreBoard.Columns[i + 1].DefaultValue = 0.0;
+                scoreBoard.Columns[i + 1].DefaultValue = DefaultValueIfNull;
                 problemsMap.Add(problems[i], i + 1);
             }
             scoreBoard.Columns.Add("Total score");

@@ -53,6 +53,7 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <Label
                 Style="{StaticResource LabelBeforeTextBox}"
@@ -136,6 +137,19 @@
                 Text="{Binding ElementName=mainControl, Path=Timelimit, Mode=TwoWay}"
                 x:Name="tbTimeLimit"
                 PreviewTextInput="tbPreviewTextInput"
+                Style="{StaticResource InputBoxStyle}"
+                    />
+
+            <Label
+                Style="{StaticResource LabelBeforeTextBox}"
+                Content="Checker"
+                Grid.Row="6"
+                Grid.Column="0"/>
+            <TextBox
+                Grid.Row="6"
+                Grid.Column="1"
+                Text="{Binding ElementName=mainControl, Path=Checker, Mode=TwoWay}"
+                x:Name="tbChecker"
                 Style="{StaticResource InputBoxStyle}"
                     />
         </Grid>

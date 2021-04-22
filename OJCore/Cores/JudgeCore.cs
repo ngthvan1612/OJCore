@@ -145,6 +145,11 @@ namespace Judge.Cores
             return problemModel.GetProblems();
         }
 
+        public void UpdateProblem(List<Problem> problems)
+        {
+            problemModel.Update(problems);
+        }
+
         public void LoadContest(string dir)
         {
             string problemDir = FS.Combine(dir, "Problems");
@@ -204,6 +209,12 @@ namespace Judge.Cores
 
             //Remove old submission
             judgeModel.RemoveSubmission(problemName, userName);
+            OnUpdateScore?.Invoke(this, new JudgeUpdateScoreSubmissionEvent()
+            {
+                ProblemName = problemName,
+                UserName = userName,
+                Points = double.NaN
+            });
 
             OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
             {
@@ -613,14 +624,14 @@ namespace Judge.Cores
         public DataSet GetScoreboard()
         {
             DataSet ds = new DataSet();
-            judgeModel.FillScoreboard(ds);
+            judgeModel.FillScoreboard(ds, double.NaN);
             return ds;
         }
 
         public void ExportExcel()
         {
             DataSet ds = new DataSet();
-            judgeModel.FillScoreboard(ds);
+            judgeModel.FillScoreboard(ds, 0.0);
             new Thread(new ThreadStart(() =>
             {
                 ExportManager.ExportDataSetToExcel(ds, true);
