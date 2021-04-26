@@ -5,8 +5,91 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <Style x:Key="LabelBeforeTextBox" TargetType="Label">
+                <Setter Property="Foreground" Value="Red" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="17" />
+                <Setter Property="Margin" Value="0, 0, 15, 0"/>
+                <Style.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="3"/>
+                    </Style>
+                </Style.Resources>
+            </Style>
+            <Style x:Key="InputBoxStyle" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                <Setter Property="Foreground" Value="Firebrick" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="FontFamily" Value="Consolas"/>
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0, 2, 5, 2" />
+                <Setter Property="FontSize" Value="17" />
+            </Style>
+            <Style TargetType="TabItem">
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
+                            <Border Name="Border"
+                                BorderThickness="1"
+                                BorderBrush="
+                                Gainsboro"
+                                CornerRadius="5"
+                                Margin="2">
+                                <ContentPresenter x:Name="ContentSite"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              ContentSource="Header"
+                                              Margin="10,2"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="blue" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="False">
+                                    <Setter TargetName="Border" Property="Background" Value="GhostWhite" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="RoundButton" TargetType="Button">
+                <Setter Property="Background" Value="Blue"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="7"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="1">
+                                <ContentPresenter
+                                Margin="8, 6, 8, 6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                </ContentPresenter>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="DodgerBlue"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseCaptured" Value="True">
+                                    <Setter Property="Background" Value="DarkBlue"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <ResourceDictionary.MergedDictionaries>
-                
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

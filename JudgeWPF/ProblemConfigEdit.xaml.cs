@@ -25,7 +25,11 @@ namespace JudgeWPF
         public ProblemConfigEdit(List<Problem> problems)
         {
             InitializeComponent();
-            Problems = problems;
+            Problems = new List<Problem>();
+            foreach (Problem p in problems)
+            {
+                Problems.Add(p.Clone() as Problem);
+            }
         }
 
         private void btnExitWithoutSaving_Click(object sender, RoutedEventArgs e)
@@ -37,11 +41,6 @@ namespace JudgeWPF
         private void btnSaveConfig_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
-            Problems.Clear();
-            for (int i = 0; i < problemsTab.Items.Count; ++i)
-            {
-                Problems.Add(((problemsTab.Items[i] as TabItem).Content as ProblemDetail).GetProblem());
-            }
             this.Close();
         }
 

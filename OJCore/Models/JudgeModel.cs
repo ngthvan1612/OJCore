@@ -11,7 +11,7 @@
     /// </summary>
     public class JudgeModel
     {
-        private readonly SQLiteConnection connection;
+        private SQLiteConnection connection;
 
         public JudgeModel()
         {
@@ -31,6 +31,15 @@
             {
                 command.ExecuteNonQuery();
             }
+        }
+
+        public void Close()
+        {
+            connection.Close();
+            connection = new SQLiteConnection("Data Source=:memory:;Version=3;foreign keys=true;");
+            connection.Open();
+            InitDB();
+            CreateNecessaryTables();
         }
 
         private void CreateNecessaryTables()
@@ -284,8 +293,8 @@
         {
             List<Submission> result = new List<Submission>();
             string query = "SELECT Problems.ProblemName, Users.UserName, SUM(IFNULL(SubmissionTestcaseResults.Points, 0.0)) " +
-                "FROM SubmissionTestcaseResults " +
-                "INNER JOIN Submissions " +
+                "FROM Submissions " +
+                "LEFT OUTER JOIN SubmissionTestcaseResults " +
                 "    ON Submissions.ID = SubmissionTestcaseResults.SubmissionID " +
                 "INNER JOIN Problems " +
                 "    ON Problems.ID = Submissions.ProblemID " +

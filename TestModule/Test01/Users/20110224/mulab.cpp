@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include <iostream>
 
 using namespace std;
 
@@ -13,14 +13,6 @@ int main() {
 	}
 	else if (a == 71) {
 		while (true) { }
-	}
-	else if (a == 73) {
-		typedef long long ll;
-		ll* w = new ll[1024 * 1024 * 100];
-		for (int i = 0, j = 0; i < 1000; ++i) {
-			int k = 1024 * i ^ j;
-			w[k] = rand();
-		}
 	}
 	cout << a * b;
 	return 0;

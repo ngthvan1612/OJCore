@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="JudgeWPF.CompilerDetail"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JudgeWPF"
+             mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid x:Name="mainControl"
+        Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="150" Width="Auto"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="Name" Style="{StaticResource LabelBeforeTextBox}"/>
+        <Label Grid.Row="1" Content="Extension" Style="{StaticResource LabelBeforeTextBox}"/>
+        <Label Grid.Row="2" Content="Compiler program" Style="{StaticResource LabelBeforeTextBox}"/>
+        <Label Grid.Row="3" Content="Compiler arguments" Style="{StaticResource LabelBeforeTextBox}"/>
+        <Label Grid.Row="4" Content="Run program" Style="{StaticResource LabelBeforeTextBox}"/>
+        <Label Grid.Row="5" Content="Run args" Style="{StaticResource LabelBeforeTextBox}"/>
+        <Label Grid.Row="6" Content="Execute name" Style="{StaticResource LabelBeforeTextBox}"/>
+
+        <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="0" Grid.Column="1"
+                 Text="{Binding Name, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="1" Grid.Column="1"
+                 Text="{Binding Extension, Mode=TwoWay}"
+                 x:Name="tbExtension"/>
+        <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="2" Grid.Column="1"
+                 Text="{Binding CompileProgram, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="3" Grid.Column="1"
+                 Text="{Binding CompileArgs, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="4" Grid.Column="1"
+                 Text="{Binding RunProgram, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="5" Grid.Column="1"
+                 Text="{Binding RunArgs, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="6" Grid.Column="1"
+                 Text="{Binding ExecuteName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+    </Grid>
+</UserControl>

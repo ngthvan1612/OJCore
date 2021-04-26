@@ -10,7 +10,7 @@
   "Testcases": [
     {
       "TestcaseName": "test1",
-      "Point": 1
+      "Point": 99
     },
     {
       "TestcaseName": "test10",
@@ -81,6 +81,14 @@
       "Point": 1
     },
     {
+      "TestcaseName": "test26_copy",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test27_copy",
+      "Point": 1
+    },
+    {
       "TestcaseName": "test3",
       "Point": 1
     },
@@ -106,7 +114,7 @@
     },
     {
       "TestcaseName": "test9",
-      "Point": 1
+      "Point": 101
     }
   ]
 }

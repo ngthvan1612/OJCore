@@ -7,6 +7,7 @@
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
+    using System.Windows.Forms;
 
     /// <summary>
     /// Judge const data
@@ -39,18 +40,16 @@
 
         private static void DeleteDirectoryFunction(string path)
         {
-            foreach (string subDir in Directory.GetDirectories(path))
+            new Process()
             {
-                DeleteDirectoryFunction(subDir);
-            }
-
-            foreach (string file in Directory.GetFiles(path))
-            {
-                File.SetAttributes(file, FileAttributes.Normal);
-                File.Delete(file);
-            }
-            
-            Directory.Delete(path);
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = @"c:\windows\system32\cmd.exe",
+                    Arguments = string.Format("/C \"rmdir /S /Q \"{0}\"\"", path),
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                }
+            }.Start();
         }
 
         public static void DeleteDirectory(string path)
@@ -69,6 +68,11 @@
         public static bool FileExist(string path)
         {
             return File.Exists(path);
+        }
+
+        public static void WriteAllBytes(string path, byte[] data)
+        {
+            File.WriteAllBytes(path, data);
         }
 
         public static string Combine(params string[] path)
@@ -100,15 +104,22 @@
         }
 
         public static readonly string JudgeAppDataDirectory =
-            CreateDirectory(Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), JS.ApplicationName));
+            CreateDirectory(Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), JS.ApplicationName));
 
         public static readonly string JudgeCompilerConfig =
             Combine(JudgeAppDataDirectory, "compilers.json");
 
         public static readonly string JudgeTempDirectory =
-            CreateDirectory(Combine(Path.GetTempPath(), string.Format("{0}-{{{1}}}", JS.ApplicationName, JS.CurrentSession)));
+            CreateDirectory(Combine(JudgeAppDataDirectory, string.Format("{0}-{{{1}}}", JS.ApplicationName, JS.CurrentSession)));
 
         public static readonly string JudgeWorkspace =
             CreateDirectory(Combine(JudgeTempDirectory, "Workspace"));
+
+        public static readonly string JudgePCMS2 =
+            CreateDirectory(Combine(JudgeAppDataDirectory, "Supports"));
+
+        public static readonly string RunEXE = Combine(JudgePCMS2, "run.exe");
+        public static readonly string InvokeDLL = Combine(JudgePCMS2, "invoke2.dll");
+
     }
 }

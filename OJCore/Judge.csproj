@@ -105,6 +105,11 @@
     <Compile Include="Databases\IJudgeDB.cs" />
     <Compile Include="Exceptions\JudgeException.cs" />
     <Compile Include="Cores\JudgeCore.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Sys\FS.cs" />
     <Compile Include="Models\JudgeModel.cs" />
     <Compile Include="Models\SubmissionTestcaseResultModel.cs" />
@@ -135,6 +140,18 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\run.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\invoke2.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

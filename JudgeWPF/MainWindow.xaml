@@ -8,11 +8,12 @@
         mc:Ignorable="d"
         Title="UTE Judge (Test)" Height="600" Width="1000"
         TextElement.FontWeight="Regular"
-        TextElement.FontSize="13"
+        TextElement.FontSize="15"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
+        Closing="winMain_Closing"
         Unloaded="Window_Unloaded" Icon="legal_law_justice_balance_court_judge_icon-icons.com_55992.png">
     <Window.Resources>
         <Style x:Key="mainMenuTop" TargetType="MenuItem">
@@ -46,7 +47,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="BlueViolet"/>
+                    <Setter Property="Background" Value="Blue"/>
                     <Setter Property="Foreground" Value="White"/>
                 </Trigger>
                 <Trigger Property="IsSelected" Value="True">
@@ -65,49 +66,50 @@
                               Style="{StaticResource mainMenuSub}"
                               x:Name="menuOpenContest"
                               Click="menuOpenContest_Click">
-                        
                     </MenuItem>
-                    <MenuItem Header="Lưu kỳ thi"
-                              x:Name="menuSaveContest"
-                              Click="menuSaveContest_Click"
-                              Style="{StaticResource mainMenuSub}">
-
+                    <MenuItem Header="Đóng kỳ thi"
+                              IsEnabled="{Binding ElementName=winMain, Path=IsContestOpened}"
+                              Style="{StaticResource mainMenuSub}"
+                              x:Name="menuCloseContest"
+                              Click="menuCloseContest_Click">
                     </MenuItem>
+                    <Separator/>
                     <MenuItem Header="Thoát"
                               Style="{StaticResource mainMenuSub}">
-
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Chấm điểm"  Style="{StaticResource mainMenuTop}">
-                    <MenuItem Header="Chấm toàn bộ"
+                    <MenuItem Header="Chấm"
+                              IsEnabled="{Binding ElementName=winMain, Path=IsContestOpened}"
                               Name="menuGradeAll"
-                              Click="menuGradeAll_Click"
+                              Click="menuGrade_Click"
                               Style="{StaticResource mainMenuSub}">
-
                     </MenuItem>
                     <MenuItem Header="Xuất file excel"
+                              IsEnabled="{Binding ElementName=winMain, Path=IsContestOpened}"
                               x:Name="menuExportExcel"
                               Click="menuExportExcel_Click"
                               Style="{StaticResource mainMenuSub}">
 
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="Cài đặt"  Style="{StaticResource mainMenuTop}">
+                <MenuItem Header="Thiết lập"  Style="{StaticResource mainMenuTop}">
                     <MenuItem Header="Trình biên dịch"
+                              x:Name="menuCompilerSettings"
+                              Click="menuCompilerSettings_Click"
                               Style="{StaticResource mainMenuSub}">
 
                     </MenuItem>
-                    
-                    <MenuItem Header="Thiết đặt các vấn đề"
+
+                    <MenuItem Header="Thiết lập các bài tập"
+                              IsEnabled="{Binding ElementName=winMain, Path=IsContestOpened}"
                               x:Name="menuProblemSettings"
                               Click="menuProblemSettings_Click"
                               Style="{StaticResource mainMenuSub}">
-                        
                     </MenuItem>
-                    
+
                     <MenuItem Header="Hệ thống chấm bài"
                               Style="{StaticResource mainMenuSub}">
-
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Hỗ trợ"  Style="{StaticResource mainMenuTop}">
@@ -115,20 +117,19 @@
                               Style="{StaticResource mainMenuSub}">
 
                     </MenuItem>
-                    <MenuItem Header="Thông tin sản phẩm"
+                    <MenuItem Header="Thông tin"
                               Style="{StaticResource mainMenuSub}">
-
                     </MenuItem>
                 </MenuItem>
             </Menu>
             <DockPanel>
                 <TabControl>
-                    <TabItem>
+                    <TabItem x:Name="tbScoreBoard">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Bảng điểm"
                                            FontSize="16"
-                                           Foreground="Red"
+                                           Foreground="White"
                                            FontFamily="Arial"/>
                             </StackPanel>
                         </TabItem.Header>
@@ -137,18 +138,14 @@
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   CanUserDeleteRows="False"
-                                  HeadersVisibility="All"
-                                  RowHeaderWidth="200"
                                   CanUserAddRows="False"
                                   CanUserResizeRows="False"
                                   CanUserResizeColumns="False"
                                   CanUserReorderColumns="False"
                                   CanUserSortColumns="False"
                                   ColumnWidth="*"
-                                  SelectionUnit="Cell"
-                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
                                   TextBlock.TextAlignment="Center"
-                                  SelectionChanged="scoreBoard_SelectionChanged"
                             >
                         </DataGrid>
                     </TabItem>

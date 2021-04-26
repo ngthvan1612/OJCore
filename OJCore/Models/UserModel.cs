@@ -42,7 +42,7 @@ namespace Judge.Models
             problemName = problemName.ToLower();
             for (int i = 0; i < UserSubmissions.Count; ++i)
             {
-                if (UserSubmissions[i].Name == problemName)
+                if (UserSubmissions[i].Name.ToLower() == problemName)
                     return UserSubmissions[i];
             }
             return null;
@@ -58,6 +58,12 @@ namespace Judge.Models
         {
             usersMap = new SortedList<string, User>();
             Log.print(LogType.Info, "Init user model ok");
+        }
+
+        public void Close()
+        {
+            usersMap.Clear();
+            UserDirectory = "";
         }
 
         public User this[string userName] => usersMap[userName.ToLower()];
@@ -90,8 +96,8 @@ namespace Judge.Models
                     string submission = Path.GetFileName(listSubmissions[j]);
                     user.UserSubmissions.Add(new UserSubmission()
                     {
-                        Name = Path.GetFileNameWithoutExtension(submission).ToLower(),
-                        Extension = Path.GetExtension(submission).ToLower()
+                        Name = Path.GetFileNameWithoutExtension(submission),
+                        Extension = Path.GetExtension(submission)
                     });
                 }
                 Log.print(LogType.Info, "Insert user '{0}'", userName);

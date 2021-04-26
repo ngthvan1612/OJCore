@@ -6,33 +6,26 @@
              xmlns:local="clr-namespace:JudgeWPF"
              mc:Ignorable="d"
              Background="White"
-             x:Name="mainControl"
              Loaded="mainControl_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <Style x:Key="LabelBeforeTextBox" TargetType="Label">
-            <Setter Property="Foreground" Value="Red" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="17" />
-            <Setter Property="Margin" Value="0, 0, 15, 0"/>
-        </Style>
-        <Style x:Key="InputBoxStyle" TargetType="TextBox">
-            <Setter Property="Foreground" Value="Blue" />
-            <Setter Property="FontFamily" Value="Consolas"/>
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0, 2, 5, 2" />
-            <Setter Property="FontSize" Value="17" />
-        </Style>
         <Style x:Key="listTestCaseCellStyle" TargetType="DataGridCell">
             <Setter Property="TextBlock.TextAlignment" Value="Center"/>
         </Style>
         <Style x:Key="listTestCaseHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
         </Style>
+        <Style x:Key="textBoxInputProblemDetail" TargetType="TextBox">
+            <Setter Property="Background" Value="Blue"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="FontSize" Value="15"/>
+        </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid
+        x:Name="mainControl"
+        >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
@@ -64,7 +57,7 @@
                 Style="{StaticResource InputBoxStyle}"
                 Grid.Row="0"
                 Grid.Column="1"
-                Text="{Binding ElementName=mainControl, Path=Input, Mode=TwoWay}"
+                Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 x:Name="tbInput"
                     />
 
@@ -74,14 +67,12 @@
                 Grid.Row="1"
                 Grid.Column="0"/>
             <CheckBox
+                IsChecked="{Binding UseStdin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Grid.Row="1"
                 Grid.Column="1"
-                IsChecked="{Binding ElementName=mainControl, Path=UseStdin, Mode=TwoWay}"
                 x:Name="cbUseStdin"
-                VerticalAlignment="Center" Margin="0,10,0,12">
-                <CheckBox.LayoutTransform>
-                    <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                </CheckBox.LayoutTransform>
+                VerticalAlignment="Center">
+                
             </CheckBox>
 
             <Label
@@ -90,11 +81,11 @@
                 Grid.Row="2"
                 Grid.Column="0"/>
             <TextBox
-                Text="{Binding ElementName=mainControl, Path=Output, Mode=TwoWay}"
                 Grid.Row="2"
                 Grid.Column="1"
                 x:Name="tbOutput"
                 Style="{StaticResource InputBoxStyle}"
+                Text="{Binding Output, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     />
             <Label
                 Style="{StaticResource LabelBeforeTextBox}"
@@ -102,41 +93,38 @@
                 Grid.Row="3"
                 Grid.Column="0"/>
             <CheckBox
-                IsChecked="{Binding ElementName=mainControl, Path=UseStdout, Mode=TwoWay}"
                 Grid.Row="3"
                 Grid.Column="1"
                 x:Name="cbUseStdout"
+                IsChecked="{Binding UseStdout, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 VerticalAlignment="Center">
-                <CheckBox.LayoutTransform>
-                    <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                </CheckBox.LayoutTransform>
             </CheckBox>
 
             <Label
                 Style="{StaticResource LabelBeforeTextBox}"
-                Content="Memory limit"
+                Content="Memory limit (KB)"
                 Grid.Row="4"
                 Grid.Column="0"/>
             <TextBox
                 Grid.Row="4"
                 Grid.Column="1"
-                Text="{Binding ElementName=mainControl, Path=Memlimit, Mode=TwoWay}"
                 PreviewTextInput="tbPreviewTextInput"
+                Text="{Binding Memorylimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 x:Name="tbMemLimit"
                 Style="{StaticResource InputBoxStyle}"
                     />
 
             <Label
                 Style="{StaticResource LabelBeforeTextBox}"
-                Content="Time limit"
+                Content="Time limit (ms)"
                 Grid.Row="5"
                 Grid.Column="0"/>
             <TextBox
                 Grid.Row="5"
                 Grid.Column="1"
-                Text="{Binding ElementName=mainControl, Path=Timelimit, Mode=TwoWay}"
                 x:Name="tbTimeLimit"
                 PreviewTextInput="tbPreviewTextInput"
+                Text="{Binding Timelimit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource InputBoxStyle}"
                     />
 
@@ -148,8 +136,8 @@
             <TextBox
                 Grid.Row="6"
                 Grid.Column="1"
-                Text="{Binding ElementName=mainControl, Path=Checker, Mode=TwoWay}"
                 x:Name="tbChecker"
+                Text="{Binding Checker, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource InputBoxStyle}"
                     />
         </Grid>
@@ -161,7 +149,7 @@
                       CanUserResizeColumns="False"
                       AutoGenerateColumns="False"
                       CanUserResizeRows="False"
-                      PreviewTextInput="tbPreviewTextInput"
+                      PreviewTextInput="listTestcases_PreviewTextInput"
                       FontSize="15"
                       ColumnWidth="*">
                 <DataGrid.Columns>
@@ -169,12 +157,14 @@
                                         IsReadOnly="True"
                                         HeaderStyle="{StaticResource listTestCaseHeaderStyle}"
                                         CellStyle="{StaticResource listTestCaseCellStyle}"
-                                        Binding="{Binding TestcaseName}">
+                                        Binding="{Binding TestcaseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        >
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Điểm"
                                         HeaderStyle="{StaticResource listTestCaseHeaderStyle}"
                                         CellStyle="{StaticResource listTestCaseCellStyle}"
-                                        Binding="{Binding Point}">
+                                        Binding="{Binding Point, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        >
                     </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>

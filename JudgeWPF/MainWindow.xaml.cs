@@ -23,17 +23,53 @@ using System.Dynamic;
 using System.Reflection.Emit;
 using System.Reflection;
 using Judge.Models;
+using Judge.Supports;
+using System.IO;
 
 namespace JudgeWPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private Judger judger;
-        public DataTable dataTable { get; set; } = new DataTable("ss");
         private SortedList<string, int> usersMap = new SortedList<string, int>();
+
+        private bool _isChanged = false;
+        public bool IsChanged
+        {
+            get
+            {
+                return _isChanged;
+            }
+            set
+            {
+                _isChanged = value;
+                if (value)
+                {
+                    ((tbScoreBoard.Header as StackPanel).Children[0] as TextBlock).Text = "Bảng điểm *";
+                }
+                else
+                {
+                    ((tbScoreBoard.Header as StackPanel).Children[0] as TextBlock).Text = "Bảng điểm";
+                }
+            }
+        }
+
+        private bool isContestOpened = false;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsContestOpened
+        {
+            get { return isContestOpened; }
+            set
+            {
+                isContestOpened = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsContestOpened"));
+            }
+        }
 
         public MainWindow()
         {
@@ -48,8 +84,7 @@ namespace JudgeWPF
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
-            judger.OnUpdateScore -= Judger_OnUpdateScore;
-            judger.StopGrade();
+
         }
 
         private void Judger_OnUpdateScore(object sender, JudgeUpdateScoreSubmissionEvent args)
@@ -58,26 +93,22 @@ namespace JudgeWPF
             (scoreBoard.Items[uid] as IDictionary<string, object>)[args.ProblemName] = args.Points.ToString("0.00");
         }
 
-        private void btnStopGrading_Click(object sender, RoutedEventArgs e)
+        private void menuGrade_Click(object sender, RoutedEventArgs e)
         {
-            judger.StopGrade();
-        }
-
-        private void btnExportExcel_Click(object sender, RoutedEventArgs e)
-        {
-            judger.ExportExcel();
-        }
-
-        private void scoreBoard_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
-        }
-
-        private void menuGradeAll_Click(object sender, RoutedEventArgs e)
-        {
-            GradingStatus gs = new GradingStatus(judger);
-            gs.ShowDialog();
-            //judger.SaveContest();
+            if (!judger.IsOpen)
+            {
+                MessageBox.Show("Cần phải mở một cuộc thi để chấm!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            SelectionGradingMode frm = new SelectionGradingMode(judger);
+            if (frm.ShowDialog() == true)
+            {
+                using (GradingStatus status = new GradingStatus(judger, frm.ProblemSelected, frm.UserSelected))
+                {
+                    status.ShowDialog();
+                    judger.SaveContest();
+                }
+            }
         }
 
         private void menuOpenContest_Click(object sender, RoutedEventArgs e)
@@ -119,7 +150,6 @@ namespace JudgeWPF
                         dynamic row = new ExpandoObject();
                         ((IDictionary<string, object>)row)["#"] = users[i];
                         scoreBoard.Items.Add(row);
-                        string type = scoreBoard.Items[0].GetType().ToString();
                         usersMap.Add(users[i], i);
                     }
 
@@ -132,6 +162,7 @@ namespace JudgeWPF
                             (scoreBoard.Items[uid] as IDictionary<string, object>)[sc.Columns[j].ColumnName] = Convert.ToDouble(sc.Rows[i][j]).ToString("0.00");
                         }
                     }
+                    IsContestOpened = true;
                 }
                 catch (JudgeDirectoryNotFoundException ex)
                 {
@@ -143,20 +174,72 @@ namespace JudgeWPF
         private void menuSaveContest_Click(object sender, RoutedEventArgs e)
         {
             judger.SaveContest();
+            IsChanged = false;
         }
 
         private void menuExportExcel_Click(object sender, RoutedEventArgs e)
         {
+            if (!judger.IsOpen)
+            {
+                MessageBox.Show("Cần phải mở xuất file excel!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             judger.ExportExcel();
         }
 
         private void menuProblemSettings_Click(object sender, RoutedEventArgs e)
         {
+            if (!judger.IsOpen)
+            {
+                MessageBox.Show("Cần phải mở một cuộc thi để chỉnh sửa các bài tập!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             ProblemConfigEdit frm = new ProblemConfigEdit(judger.GetProblems());
             if (frm.ShowDialog() == true)
             {
                 judger.UpdateProblem(frm.Problems);
             }
+        }
+
+        private void scoreBoard_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show(scoreBoard.SelectedCells[0].Item.ToString());
+        }
+
+        private void winMain_Unloaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void winMain_Closing(object sender, CancelEventArgs e)
+        {
+            judger.OnUpdateScore -= Judger_OnUpdateScore;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            judger.Dispose();
+        }
+
+        private void menuCompilerSettings_Click(object sender, RoutedEventArgs e)
+        {
+            List<Compiler> compilers = new List<Compiler>();
+            foreach (Compiler com in judger.GetCompilers())
+            {
+                compilers.Add(com.Clone() as Compiler);
+            }
+            CompilerManager cm = new CompilerManager(compilers);
+            if (cm.ShowDialog() == true)
+            {
+                File.WriteAllText("test.json", Judge.Supports.CompilerManager.ToJsonStatic(cm.Compilers));
+            }
+        }
+
+        private void menuCloseContest_Click(object sender, RoutedEventArgs e)
+        {
+            judger.CloseContest();
+            scoreBoard.Columns.Clear();
+            scoreBoard.Items.Clear();
+            scoreBoard.ItemsSource = null;
+            IsContestOpened = false;
         }
     }
 }

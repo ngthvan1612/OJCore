@@ -9,6 +9,7 @@ namespace Judge.Cores
     using Supports;
     using System.Data;
     using System.Threading;
+    using System.Windows.Forms;
 
     public enum JudgeGradingEventType
     {
@@ -84,6 +85,8 @@ namespace Judge.Cores
             }
         }
 
+        public bool IsOpen { get; private set; } = false;
+
         public Judger()
         {
             sandbox = new Sandbox();
@@ -92,7 +95,9 @@ namespace Judge.Cores
             judgeModel = new JudgeModel();
             compilerManager = new CompilerManager();
             checker = new Checker();
-            this.workSpace = FS.JudgeWorkspace;
+            workSpace = FS.JudgeWorkspace;
+            FS.WriteAllBytes(FS.RunEXE, Properties.Resources.run_PCMS2);
+            FS.WriteAllBytes(FS.InvokeDLL, Properties.Resources.invoke2_PCMS2);
         }
 
         #region Load Contest (Problem & User directory)
@@ -170,6 +175,15 @@ namespace Judge.Cores
                 judgeModel.Load(offlineJudgeDBFile);
             }
             CurrentContestDir = dir;
+            IsOpen = true;
+        }
+
+        public void CloseContest()
+        {
+            judgeModel.Close();
+            problemModel.Close();
+            userModel.Close();
+            IsOpen = false;
         }
 
         public void SaveContest()
@@ -189,6 +203,11 @@ namespace Judge.Cores
         public void UpdateProblemSetting(Problem problem)
         {
             problemModel[problem.ProblemName] = problem;
+        }
+
+        public List<Compiler> GetCompilers()
+        {
+            return compilerManager.GetCompilers();
         }
 
         #endregion
@@ -236,6 +255,7 @@ namespace Judge.Cores
                     ProblemName = problemName
                 });
                 TestcasesGraded += total;
+                judgeModel.CreateNewSubmission(problemName, userName, "Not found submission!", "(null)");
                 return 0;
             }
             //check again before copy submission to workspace
@@ -250,6 +270,7 @@ namespace Judge.Cores
                     ProblemName = problemName
                 });
                 TestcasesGraded += total;
+                judgeModel.CreateNewSubmission(problemName, userName, "Not found submission!", "(null)");
                 return 0;
             }
 
@@ -282,6 +303,7 @@ namespace Judge.Cores
                 });
                 TestcasesGraded += total;
                 FS.DeleteDirectory(currentDir);
+                judgeModel.CreateNewSubmission(problemName, userName, "Not found compiler!", "(null)");
                 return 0;
             }
             Compiler compiler = compilerManager[submission.Extension];
@@ -306,16 +328,22 @@ namespace Judge.Cores
                 });
                 TestcasesGraded += total;
                 FS.DeleteDirectory(currentDir);
+                judgeModel.CreateNewSubmission(problemName, userName, compileResult.Message, compiler.Name);
                 return 0;
             }
-            if (!IsGrading)
+            if (!IsGrading) //cancel
             {
                 FS.DeleteDirectory(currentDir);
                 TestcasesGraded += total;
                 return 0;
             }
 
-            OnGradeStatusChanged.Invoke(this, new JudgeGradingEvent() { Event = JudgeGradingEventType.CompileSuccessfully });
+            OnGradeStatusChanged.Invoke(this, new JudgeGradingEvent()
+            {
+                Event = JudgeGradingEventType.CompileSuccessfully,
+                UserName = userName,
+                ProblemName = problemName
+            });
 
             //3. Run testcase
             List<SubmissionTestcaseResult> gradingTestcaseResult = new List<SubmissionTestcaseResult>();
@@ -356,7 +384,7 @@ namespace Judge.Cores
                     problem.UseStdout ? destOutput : null
                 );
 
-                if (!IsGrading)
+                if (!IsGrading) //cancel
                 {
                     TestcasesGraded += total;
                     FS.DeleteDirectory(currentDir);
@@ -463,8 +491,8 @@ namespace Judge.Cores
             }
 
             //update status to database & calc score
-            int submission_id = judgeModel.CreateNewSubmission(problemName, userName, compileResult.Message, compiler.Name);
             double totalScore = 0;
+            int submission_id = judgeModel.CreateNewSubmission(problemName, userName, compileResult.Message, compiler.Name);
             foreach (SubmissionTestcaseResult r in gradingTestcaseResult)
             {
                 if (r.Status == "AC")
@@ -486,6 +514,8 @@ namespace Judge.Cores
                 throw new JudgeProblemNotFoundExpcetion(problemName);
             if (!userModel.Contains(userName))
                 throw new JudgeUserNotFoundException(userName);
+            Totaltestcases = TestcasesGraded = 0;
+            Totaltestcases = problemModel[problemName].Testcases.Count;
             problemName = problemModel[problemName].ProblemName;
             userName = userModel[userName].UserName; //exactly name
             if (IsGrading)
@@ -519,6 +549,8 @@ namespace Judge.Cores
             {
                 IsGrading = true;
                 List<string> listUsers = userModel.GetListUsernames();
+                Totaltestcases = TestcasesGraded = 0;
+                Totaltestcases = problemModel[problemName].Testcases.Count * listUsers.Count;
                 foreach (string userName in listUsers)
                 {
                     double totalScore = GradeOneSubmission(problemName, userName);
@@ -552,6 +584,9 @@ namespace Judge.Cores
             {
                 IsGrading = true;
                 List<string> listProblems = problemModel.GetListProblemnames();
+                Totaltestcases = TestcasesGraded = 0;
+                foreach (Problem p in problemModel.GetProblems())
+                    Totaltestcases += p.Testcases.Count;
                 foreach (string problemName in listProblems)
                 {
                     double totalScore = GradeOneSubmission(problemName, userName);
@@ -639,7 +674,7 @@ namespace Judge.Cores
         }
 
         #endregion
-        ~Judger()
+        public void Dispose()
         {
             FS.DeleteDirectory(FS.JudgeTempDirectory);
         }

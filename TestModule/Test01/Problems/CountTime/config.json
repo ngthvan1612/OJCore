@@ -3,14 +3,14 @@
   "Output": "CountTime.OUT",
   "UseStdin": true,
   "UseStdout": true,
-  "Timelimit": 1500,
+  "Timelimit": 1000,
   "Memorylimit": 16384,
   "Checker": "c:/windows/system32/fc.exe",
   "ProblemType": "OI",
   "Testcases": [
     {
       "TestcaseName": "test1",
-      "Point": 0
+      "Point": 15
     },
     {
       "TestcaseName": "test10",
@@ -18,7 +18,7 @@
     },
     {
       "TestcaseName": "test11",
-      "Point": 1
+      "Point": 9
     },
     {
       "TestcaseName": "test12",
@@ -66,7 +66,7 @@
     },
     {
       "TestcaseName": "test9",
-      "Point": 1
+      "Point": 97
     }
   ]
 }

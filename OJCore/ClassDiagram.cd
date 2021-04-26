@@ -2,6 +2,9 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Judge.Cores.Judger">
     <Position X="7.25" Y="0.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
     <NestedTypes>
       <Delegate Name="Judge.Cores.Judger.JudgeGradingEventHandler" Collapsed="true">
         <TypeIdentifier>
@@ -15,7 +18,7 @@
       </Delegate>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAQAAACAIgABk2ABEgMAADgAAoAAAEAAQAQAAAEAgYA=</HashCode>
+      <HashCode>AAQAAACgIiABkSABEgMAQCgAQoAAAkIAQAQAAIEBAaA=</HashCode>
       <FileName>Cores\JudgeCore.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -30,14 +33,14 @@
   <Class Name="Judge.Supports.CompilerManager" Collapsed="true">
     <Position X="10.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAEEAAAAAAAAAAAECAAAAAAAAAAAAAAAAAAAAAAYAAA=</HashCode>
+      <HashCode>gAEEAAAAAAAAAAAFCAAACAAAAAAAAAAAAAAAAAAYAAA=</HashCode>
       <FileName>Supports\Compiler.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Judge.Models.JudgeModel" Collapsed="true">
     <Position X="10.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgIAFAEJABgQAAAABAIEAACBRAIQAAAAAAApABAI=</HashCode>
+      <HashCode>AAAAgIAFAEJABgQAAAABAIEAACBRAIQAAABAAAhAAAI=</HashCode>
       <FileName>Models\JudgeModel.cs</FileName>
     </TypeIdentifier>
   </Class>

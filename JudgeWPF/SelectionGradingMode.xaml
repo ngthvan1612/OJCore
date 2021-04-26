@@ -1,0 +1,123 @@
+﻿<Window x:Class="JudgeWPF.SelectionGradingMode"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JudgeWPF"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        KeyDown="Window_KeyDown"
+        SizeToContent="WidthAndHeight"
+        Title="Chấm bài">
+    <Window.Resources>
+        <Style x:Key="radioButtonSelectionGradingMode" TargetType="RadioButton">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5, 10, 5, 10"/>
+        </Style>
+        <Style x:Key="comboBoxSelectionGradingMode" TargetType="ComboBox">
+            <Setter Property="MinWidth" Value="250"/>
+            <Setter Property="IsTextSearchEnabled" Value="True"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="IsEditable" Value="True"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5, 0, 5, 0" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <RadioButton Content="Chấm tất cả"
+                     x:Name="rbGradingAll"
+                     IsChecked="True"
+                     GroupName="selectionGradingMode"
+                     Grid.Row="0"
+                     TabIndex="1"
+                     Style="{StaticResource radioButtonSelectionGradingMode}" Margin="5,10,0,10">
+            </RadioButton>
+            <RadioButton Content="Chấm theo bài"
+                     x:Name="rbGradingProblem"
+                     GroupName="selectionGradingMode"
+                     Grid.Row="1"
+                     TabIndex="2"
+                     Style="{StaticResource radioButtonSelectionGradingMode}" Margin="5,10,0,10">
+            </RadioButton>
+            <RadioButton Content="Chấm theo thí sinh"
+                     x:Name="rbGradingUser"
+                     TabIndex="4"
+                     GroupName="selectionGradingMode"
+                     Grid.Row="2"
+                     Style="{StaticResource radioButtonSelectionGradingMode}" Margin="5,10,0,10">
+            </RadioButton>
+            <RadioButton Content="Chấm một bài"
+                     x:Name="rbGradingSubmission"
+                     GroupName="selectionGradingMode"
+                     Grid.Row="3"
+                     TabIndex="6"
+                     Style="{StaticResource radioButtonSelectionGradingMode}" Margin="5,10,0,10">
+            </RadioButton>
+            <ComboBox Grid.Row="1"
+                      Grid.Column="1"
+                      TabIndex="3"
+                      x:Name="cbProblemGradingProblem"
+                      IsEnabled="{Binding ElementName=rbGradingProblem, Path=IsChecked}"
+                      Style="{StaticResource comboBoxSelectionGradingMode}" Grid.ColumnSpan="2" Margin="5,7,5,6">
+            </ComboBox>
+            <ComboBox Grid.Row="2"
+                      Grid.Column="1"
+                      TabIndex="5"
+                      x:Name="cbUserGradingUser"
+                      IsEnabled="{Binding ElementName=rbGradingUser, Path=IsChecked}"
+                      Style="{StaticResource comboBoxSelectionGradingMode}" Grid.ColumnSpan="2" Margin="5,6,5,7">
+            </ComboBox>
+            <StackPanel Grid.Row="3" Grid.Column="1">
+            <ComboBox x:Name="cbProblemGradingSubmission"
+                      TabIndex="7"
+                      IsEnabled="{Binding ElementName=rbGradingSubmission, Path=IsChecked}"
+                      Style="{StaticResource comboBoxSelectionGradingMode}" Grid.ColumnSpan="2" Margin="5,7,5,6">
+            </ComboBox>
+            <ComboBox x:Name="cbUserGradingSubmission"
+                      IsEnabled="{Binding ElementName=rbGradingSubmission, Path=IsChecked}"
+                      TabIndex="8"
+                      Style="{StaticResource comboBoxSelectionGradingMode}" Margin="5,7,5,6">
+            </ComboBox>
+            </StackPanel>
+        </Grid>
+        <StackPanel Grid.Row="1"
+                    Height="Auto"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <Button Content="Chấm"
+                    TabIndex="9"
+                    x:Name="btnStartGrading"
+                    Click="btnStartGrading_Click"
+                    Style="{StaticResource RoundButton}">
+            </Button>
+            <Button Content="Hủy"
+                    x:Name="btnCancel"
+                    Click="btnCancel_Click"
+                    Style="{StaticResource RoundButton}">
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

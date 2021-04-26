@@ -5,6 +5,7 @@ namespace Judge.Models
     using Exceptions;
     using Judge.Supports;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -12,46 +13,59 @@ namespace Judge.Models
     using System.Text.Json.Serialization;
     using System.Windows.Forms;
 
-    public class Testcase
+    public class Testcase : INotifyPropertyChanged
     {
+        private string testName = "";
         [JsonPropertyName("TestcaseName")]
-        public string TestcaseName { get; set; }
+        public string TestcaseName { get { return testName; } set { testName = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TestcaseName")); } }
 
+        private double point = 0.0;
         [JsonPropertyName("Point")]
-        public double Point { get; set; } = 0.0;
+        public double Point { get { return point; } set { point = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Point")); } }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 
-    public class Problem
+    public class Problem : INotifyPropertyChanged, ICloneable
     {
         [JsonIgnore]
         public string ProblemName { get; set; }
 
+        private string input = "";
         [JsonPropertyName("Input")]
-        public string Input { get; set; }
+        public string Input { get { return input; } set { input = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Input")); } }
 
+        private string output = "";
         [JsonPropertyName("Output")]
-        public string Output { get; set; }
+        public string Output { get { return output; } set { output = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Output")); } }
 
+        private bool usestdin = true;
         [JsonPropertyName("UseStdin")]
-        public bool UseStdin { get; set; } = true;
+        public bool UseStdin { get { return usestdin; } set { usestdin = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UseStdin")); } }
 
+        private bool usestdout = true;
         [JsonPropertyName("UseStdout")]
-        public bool UseStdout { get; set; } = true;
+        public bool UseStdout { get { return usestdout; } set { usestdout = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UseStdout")); } }
 
+        private int timelimit = 1000;
         [JsonPropertyName("Timelimit")]
-        public int Timelimit { get; set; } = 1000; //miliseconds
+        public int Timelimit { get { return timelimit; } set { timelimit = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Timelimit")); } }
 
+        private int memorylimit = 1024 * 16;
         [JsonPropertyName("Memorylimit")]
-        public int Memorylimit { get; set; } = 1024 * 16; //kilobyte
+        public int Memorylimit { get { return memorylimit; } set { memorylimit = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Memorylimit")); } }
 
+        private string checker = "c:/windows/system32/fc.exe";
         [JsonPropertyName("Checker")]
-        public string Checker { get; set; } = "c:/windows/system32/fc.exe"; //default to fc
+        public string Checker { get { return checker; } set { checker = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Checker")); } }
 
+        private string problemtype = "OI";
         [JsonPropertyName("ProblemType")]
-        public string ProblemType { get; set; } = "OI"; ///ACM, OI, ...
+        public string ProblemType { get { return problemtype; } set { problemtype = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ProblemType")); } }
 
+        private List<Testcase> testcases = new List<Testcase>();
         [JsonPropertyName("Testcases")]
-        public List<Testcase> Testcases { get; set; } = new List<Testcase>();
+        public List<Testcase> Testcases { get { return testcases; } set { testcases = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Testcases")); } }
 
         //Link to [/Problems] directory
         [JsonIgnore]
@@ -64,6 +78,8 @@ namespace Judge.Models
             ParentDirectory = parent;
             ProblemName = probName;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private void CreateDefaultConfig()
         {
@@ -91,16 +107,42 @@ namespace Judge.Models
                 {
                     Problem temp = JsonSerializer.Deserialize<Problem>(textReader.ReadToEnd());
                     textReader.Close();
-                    this.Checker = temp.Checker;
-                    this.Input = temp.Input;
-                    this.Memorylimit = temp.Memorylimit;
-                    this.Output = temp.Output;
-                    this.ProblemType = temp.ProblemType;
-                    this.Testcases = temp.Testcases;
-                    this.Timelimit = temp.Timelimit;
-                    this.UseStdin = temp.UseStdin;
-                    this.UseStdout = temp.UseStdout;
+                    Checker = temp.Checker;
+                    Input = temp.Input;
+                    Memorylimit = temp.Memorylimit;
+                    Output = temp.Output;
+                    ProblemType = temp.ProblemType;
+                    Testcases = temp.Testcases;
+                    Timelimit = temp.Timelimit;
+                    UseStdin = temp.UseStdin;
+                    UseStdout = temp.UseStdout;
                 }
+                //Reload testcases
+                System.Diagnostics.Debug.WriteLine("*************************");
+                SortedList<string, double> map = new SortedList<string, double>();
+                for (int i = 0; i < Testcases.Count; ++i)
+                {
+                    map.Add(Testcases[i].TestcaseName.ToLower(), Testcases[i].Point);
+                    System.Diagnostics.Debug.WriteLine(string.Format("add {0}", Testcases[i].TestcaseName.ToLower()));
+                }
+                List<Testcase> testcases = new List<Testcase>();
+                string[] subDir = Directory.GetDirectories(Path.Combine(ParentDirectory, ProblemName));
+                for (int i = 0; i < subDir.Length; ++i)
+                {
+                    Testcase test = new Testcase()
+                    {
+                        TestcaseName = Path.GetFileName(subDir[i]),
+                        Point = 1.0
+                    };
+                    System.Diagnostics.Debug.WriteLine(string.Format("ask {0}", test.TestcaseName.ToLower()));
+                    if (map.ContainsKey(test.TestcaseName.ToLower()))
+                    {
+                        test.Point = map[test.TestcaseName.ToLower()];
+                    }
+                    testcases.Add(test);
+                }
+                this.Testcases = testcases;
+                this.SaveConfig();
             }
             else
             {
@@ -122,6 +164,33 @@ namespace Judge.Models
             return JsonSerializer.Serialize(this,
                     new JsonSerializerOptions() { WriteIndented = true });
         }
+
+        public object Clone()
+        {
+            List<Testcase> testcases = new List<Testcase>();
+            foreach (Testcase test in Testcases)
+            {
+                testcases.Add(new Testcase()
+                {
+                    Point = test.Point,
+                    TestcaseName = test.TestcaseName
+                });
+            }
+            return new Problem()
+            {
+                ParentDirectory = ParentDirectory,
+                Checker = Checker,
+                Input = Input,
+                Output = Output,
+                UseStdin = UseStdin,
+                UseStdout = UseStdout,
+                Memorylimit = Memorylimit,
+                Timelimit = Timelimit,
+                ProblemName = ProblemName,
+                ProblemType = ProblemType,
+                Testcases = testcases
+            };
+        }
     }
 
     public class ProblemModel
@@ -133,6 +202,12 @@ namespace Judge.Models
         {
             problemsMap = new SortedList<string, Problem>();
             Log.print(LogType.Info, "Init problem model ok");
+        }
+
+        public void Close()
+        {
+            problemsMap.Clear();
+            ProblemDirectory = "";
         }
 
         public bool Contains(string problemName)
