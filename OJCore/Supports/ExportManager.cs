@@ -42,6 +42,7 @@ namespace Judge.Supports
                     }
                 }
                 range.Value2 = data;
+                range.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                 range.EntireColumn.AutoFit();
                 range.EntireRow.AutoFit();
                 if (firstRowColCenter)

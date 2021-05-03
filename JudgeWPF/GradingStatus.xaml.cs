@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Judge.Cores;
+using Microsoft.WindowsAPICodePack.Taskbar;
+using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Judge.Cores;
 using System.Windows.Threading;
-using System.IO;
-using System.Threading;
-using Microsoft.WindowsAPICodePack.Taskbar;
 
 namespace JudgeWPF
 {
@@ -50,6 +39,8 @@ namespace JudgeWPF
         private DispatcherTimer DispatcherTimer;
         private DateTime Start;
 
+        private bool IsButtonStopClicked = false;
+
         public Time CurrentTime = new Time(0, 0, 0);
 
         public GradingStatus(Judger baseJudger, string problem, string user)
@@ -76,34 +67,21 @@ namespace JudgeWPF
         {
             TimeSpan current = DateTime.Now - Start;
             if (judger.TestcasesGraded != 0)
+            {
                 tbTimeLeft.Text = "Còn lại " + new TimeSpan((judger.Totaltestcases - judger.TestcasesGraded) * current.Ticks / judger.TestcasesGraded).ToString(@"hh\:mm\:ss");
+            }
             else
                 tbTimeLeft.Text = "--:--:--";
             tbCurrentTime.Text = "Đang chấm " + current.ToString(@"hh\:mm\:ss");
         }
 
+        private string currentCompiler = "";
+
         private void SendData(string msg, Brush color, bool centerAndBold = false)
         {
             Dispatcher.Invoke(() =>
             {
-                ListBoxItem lbi = new ListBoxItem()
-                {
-                    Content = new TextBlock()
-                    {
-                        Text = msg,
-                        Foreground = color,
-                        FontFamily = new FontFamily("Arial"),
-                        FontSize = 17
-                    }
-                };
-                if (centerAndBold)
-                {
-                    lbi.HorizontalAlignment = HorizontalAlignment.Center;
-                    lbi.FontWeight = System.Windows.FontWeights.Bold;
-                }
-                listMessage.Items.Add(lbi);
-                listMessage.SelectedIndex = listMessage.Items.Count - 1;
-                listMessage.ScrollIntoView(listMessage.SelectedItem);
+                tbStatus.Text = msg;
                 gradingProcess.Value = Math.Round(100.0 * judger.TestcasesGraded / judger.Totaltestcases, 2);
                 TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, this);
                 TaskbarManager.Instance.SetProgressValue(Convert.ToInt32(gradingProcess.Value), 100, this);
@@ -125,19 +103,28 @@ namespace JudgeWPF
                         case "RTE": status = "Chạy sinh lỗi"; break;
                         default: status = "Lỗi không xác định"; break;
                     }
-                    SendData(string.Format("{0}.{1}.{2} \u25BA [{3}, {4}, {5}ms, {6}KB]", args.UserName, args.ProblemName,
-                    args.TestCaseName, status, args.Points, args.TimeExecuted, args.MemoryUsed), Brushes.Black);
+                    SendData(string.Format("[{7}] {0}.{1}.{2} \u25BA [{3}, {4}, {5}ms, {6}KB]", args.UserName, args.ProblemName,
+                    args.TestCaseName, status, args.Points, args.TimeExecuted, args.MemoryUsed, currentCompiler), Brushes.Black);
                     break;
                 case JudgeGradingEventType.Complete:
+                    SendData("Chấm xong!", Brushes.Red, true);
                     AllowClose = true;
                     Dispatcher.Invoke(() =>
                     {
                         judger.OnGradeStatusChanged -= Judger_OnGradeStatusChanged;
-                        Close();
+                        btnStopGrading.Click -= btnStopGrading_Click;
+                        btnStopGrading.Click += btnCloseGrading_Click;
+                        DispatcherTimer.IsEnabled = false;
+                        tbTimeLeft.Text = "--:--:--";
+                        gradingProcess.Value = 100;
+                        btnStopGrading.Content = "Đóng";
+                        tbCurrentTime.Text = tbCurrentTime.Text.Replace("Đang chấm", "Chấm xong");
+                        if (!IsButtonStopClicked)
+                            this.Close();
                     });
                     break;
                 case JudgeGradingEventType.CompileError:
-                    SendData(string.Format("{0}.{1} \u25BA Dịch lỗi \u25BA {2}", args.UserName, args.ProblemName, args.Status), Brushes.DarkRed);
+                    SendData(string.Format("{0}.{1} \u25BA Dịch lỗi", args.UserName, args.ProblemName), Brushes.DarkRed);
                     break;
                 case JudgeGradingEventType.Compiling:
                     SendData(string.Format("{0}.{1} \u25BA Đang biên dịch...", args.UserName, args.ProblemName,
@@ -145,6 +132,7 @@ namespace JudgeWPF
                     break;
                 case JudgeGradingEventType.CompileSuccessfully:
                     SendData(string.Format("{0}.{1} \u25BA Biên dịch thành công", args.UserName, args.ProblemName), Brushes.Green);
+                    currentCompiler = args.Status;
                     break;
                 case JudgeGradingEventType.SubmissionNotFound:
                     SendData(string.Format("{0}.{1} \u25BA Không tìm thấy bài nộp", args.UserName, args.ProblemName), Brushes.Brown);
@@ -152,6 +140,9 @@ namespace JudgeWPF
                 case JudgeGradingEventType.BeginGradingSubmission:
                     SendData(string.Format("{0}.{1}", args.UserName, args.ProblemName), Brushes.DarkBlue, true);
                     SendData(string.Format("{0}.{1} \u25BA Bắt đầu chấm...", args.UserName, args.ProblemName), Brushes.DarkBlue);
+                    break;
+                case JudgeGradingEventType.NotFoundExecute:
+                    SendData(string.Format("{0}.{1} \u25BA Không tìm thấy file thực thi", args.UserName, args.ProblemName), Brushes.Brown);
                     break;
                 case JudgeGradingEventType.CompilerNotFound:
                     //SendData(string.Format("Compiler not found for {0}", args.Status), Brushes.IndianRed);
@@ -166,8 +157,14 @@ namespace JudgeWPF
                 e.Cancel = true;
         }
 
+        private void btnCloseGrading_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
         private void btnStopGrading_Click(object sender, RoutedEventArgs e)
         {
+            IsButtonStopClicked = true;
             SendData("Đang dừng lại...", Brushes.Red);
             judger.StopGrade();
         }
@@ -175,6 +172,11 @@ namespace JudgeWPF
         public void Dispose()
         {
             DispatcherTimer.IsEnabled = false;
+        }
+
+        private void btnDeleteStatus_Click(object sender, RoutedEventArgs e)
+        {
+            //listMessage.Items.Clear();
         }
     }
 }

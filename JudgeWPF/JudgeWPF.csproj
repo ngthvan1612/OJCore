@@ -43,8 +43,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MaterialDesignColors, Version=2.0.0.2422, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MaterialDesignColors.2.0.0\lib\net452\MaterialDesignColors.dll</HintPath>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.1.1.20, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.6.1.1\lib\net45\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -63,6 +63,7 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -87,11 +88,18 @@
     <Compile Include="CompilerManager.xaml.cs">
       <DependentUpon>CompilerManager.xaml</DependentUpon>
     </Compile>
+    <Compile Include="INotifyPropertyChange.cs" />
     <Compile Include="JudgeInfo.xaml.cs">
       <DependentUpon>JudgeInfo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Scoreboard.xaml.cs">
+      <DependentUpon>Scoreboard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SelectionGradingMode.xaml.cs">
       <DependentUpon>SelectionGradingMode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SubmissionDetail.xaml.cs">
+      <DependentUpon>SubmissionDetail.xaml</DependentUpon>
     </Compile>
     <Page Include="CompilerDetail.xaml">
       <SubType>Designer</SubType>
@@ -132,7 +140,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Scoreboard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SelectionGradingMode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SubmissionDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -191,6 +207,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="legal_law_justice_balance_court_judge_icon-icons.com_55992.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\check-7062.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

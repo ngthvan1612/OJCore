@@ -10,7 +10,7 @@
   "Testcases": [
     {
       "TestcaseName": "test1",
-      "Point": 11
+      "Point": 1
     },
     {
       "TestcaseName": "test10",
@@ -86,7 +86,7 @@
     },
     {
       "TestcaseName": "test9",
-      "Point": 22
+      "Point": 1
     }
   ]
 }

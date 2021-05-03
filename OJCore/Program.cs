@@ -7,14 +7,13 @@ using System;
 
 namespace Judge
 {
-    using Sys;
     using Cores;
     using Supports;
+    using Sys;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Threading;
     using System.Windows.Forms;
-    using System.Collections;
-    using System.Collections.Generic;
 
     public class Program
     {

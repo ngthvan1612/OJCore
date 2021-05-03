@@ -1,0 +1,52 @@
+﻿{
+  "Input": "BAI1.INP",
+  "Output": "BAI1.OUT",
+  "UseStdin": true,
+  "UseStdout": true,
+  "Timelimit": 1000,
+  "Memorylimit": 16384,
+  "Checker": "c:/windows/system32/fc.exe",
+  "ProblemType": "OI",
+  "Testcases": [
+    {
+      "TestcaseName": "test01",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test02",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test03",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test04",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test05",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test06",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test07",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test08",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test09",
+      "Point": 1
+    },
+    {
+      "TestcaseName": "test10",
+      "Point": 1
+    }
+  ]
+}

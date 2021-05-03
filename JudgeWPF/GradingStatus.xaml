@@ -12,25 +12,26 @@
         WindowStartupLocation="CenterScreen"
         Closing="Window_Closing"
         x:Name="mainWindow"
-        Title="Đang chấm" Height="450" Width="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-        </Grid.RowDefinitions>
-        <DockPanel DockPanel.Dock="Top" Grid.Row="0">
+        ResizeMode="CanMinimize"
+        ShowInTaskbar="False"
+        Icon="Resources/check-7062.png"
+        SizeToContent="Height"
+        Title="Đang chấm" Width="500">
+    <Grid Height="Auto">
+        <!--<DockPanel DockPanel.Dock="Top" Grid.Row="0">
             <ListBox x:Name="listMessage"
                      FontSize="15">
             </ListBox>
-        </DockPanel>
-        <StackPanel Grid.Row="1">
+        </DockPanel>-->
+        <StackPanel Grid.Row="0">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <TextBlock x:Name="tbStatus"
+                           HorizontalAlignment="Center"
+                           FontFamily="Arial"
+                           FontSize="17"/>
                 <ProgressBar x:Name="gradingProcess"
                              Value="60"
-                             Width="300"
+                             Width="400"
                              VerticalAlignment="Center"
                              Margin="0, 5, 0, 0"
                              FontSize="15">
@@ -39,7 +40,9 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type ProgressBar}">
-                                        <Grid Height="12" MinWidth="50" Background="{TemplateBinding Background}">
+                                        <Grid Height="12"
+                                              MinWidth="50"
+                                              Background="{TemplateBinding Background}">
                                             <VisualStateManager.VisualStateGroups>
                                                 <VisualStateGroup x:Name="CommonStates">
                                                     <VisualState x:Name="Determinate" />
@@ -95,8 +98,12 @@
                     x:Name="btnStopGrading"
                     Click="btnStopGrading_Click"
                     Content="Dừng chấm"
-                    Style="{StaticResource RoundButton}"
-                    Margin="0, 4, 2, 4">
+                    Style="{StaticResource RoundButton}">
+                </Button>
+                <Button Content="Xóa nhật ký"
+                        x:Name="btnDeleteStatus"
+                        Click="btnDeleteStatus_Click"
+                        Style="{StaticResource RoundButton}">
                 </Button>
             </StackPanel>
         </StackPanel>

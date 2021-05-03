@@ -14,49 +14,20 @@
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         Closing="winMain_Closing"
-        Unloaded="Window_Unloaded" Icon="legal_law_justice_balance_court_judge_icon-icons.com_55992.png">
+        Unloaded="Window_Unloaded" Icon="Resources/check-7062.png">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.OpenContestCommand}"
+                        x:Name="OpenContestCommandBinding"
+                        Executed="OpenContestCommandBinding_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.GradeCommand}" 
+                        x:Name="GradeCommandBinding"
+                        Executed="GradeCommandBinding_Executed"/>
+        <CommandBinding Command="{x:Static local:MainWindow.GotoUserCommand}" 
+                        x:Name="GotoUserCommandBinding"
+                        Executed="GotoUserCommandBinding_Executed"/>
+    </Window.CommandBindings>
     <Window.Resources>
-        <Style x:Key="mainMenuTop" TargetType="MenuItem">
-            <Setter Property="Height" Value="Auto"/>
-            <Setter Property="FontSize" Value="15px"/>
-        </Style>
-        <Style x:Key="mainMenuSub" TargetType="MenuItem">
-            <Setter Property="Height" Value="Auto"/>
-            <Setter Property="FontSize" Value="15px"/>
-        </Style>
-        <Style x:Key="dataGridColumnHeader_User" TargetType="DataGridColumnHeader">
-            <Setter Property="Height" Value="Auto"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="15px"/>
-            <Setter Property="Foreground" Value="Orange" />
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-        <Style x:Key="dataGridColumnHeader_Problem" TargetType="DataGridColumnHeader">
-            <Setter Property="Height" Value="Auto"/>
-            <Setter Property="FontSize" Value="15px"/>
-            <Setter Property="FontStyle" Value="Italic" />
-            <Setter Property="Foreground" Value="SlateBlue" />
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-        <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="FontSize" Value="15px" />
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="Blue"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </Trigger>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="DarkBlue"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
+        
     </Window.Resources>
     <Grid>
         <DockPanel>
@@ -123,8 +94,8 @@
                 </MenuItem>
             </Menu>
             <DockPanel>
-                <TabControl>
-                    <TabItem x:Name="tbScoreBoard">
+                <TabControl DockPanel.Dock="Top">
+                    <TabItem x:Name="tbScoreBoard" IsSelected="True">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Bảng điểm"
@@ -133,7 +104,7 @@
                                            FontFamily="Arial"/>
                             </StackPanel>
                         </TabItem.Header>
-                        <DataGrid x:Name="scoreBoard"
+                        <!--<DataGrid x:Name="scoreBoard"
                                   Margin="0, 4, 0, 0"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
@@ -147,7 +118,71 @@
                                   SelectionUnit="FullRow"
                                   TextBlock.TextAlignment="Center"
                             >
-                        </DataGrid>
+                        </DataGrid>-->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                <Label Style="{StaticResource LabelBeforeTextBox}"
+                                   Content="Tìm thí sinh"
+                                   />
+                                <TextBox
+                                    x:Name="tbGotoUser"
+                                    HorizontalAlignment="Left"
+                                    MinWidth="120"
+                                    Width="Auto"
+                                    PreviewKeyDown="tbGotoUser_PreviewKeyDown"
+                                    TextChanged="tbGotoUser_TextChanged"
+                                    Style="{StaticResource InputBoxStyle}"
+                                    />
+                            </StackPanel>
+                            <local:Scoreboard x:Name="scoreBoard"
+                                              Grid.Row="1"
+                                              OnGradeSubmission="scoreBoard_OnGradeSubmission"
+                                              OnGradeProblem="scoreBoard_OnGradeProblem"
+                                              OnGradeUser="scoreBoard_OnGradeUser"
+                                              OnClickSubmissionDetail="scoreBoard_OnClickSubmissionDetail"
+                                              >
+
+                            </local:Scoreboard>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="tbTest">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Test"
+                                           FontSize="16"
+                                           Foreground="White"
+                                           FontFamily="Arial"/>
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                                <Button
+                                    x:Name="btnTest"
+                                    Click="btnTest_Click"
+                                    Content="Add"
+                                    Style="{StaticResource RoundButton}"
+                                    ></Button>
+                                <Button
+                                    x:Name="btnRandom"
+                                    Click="btnRandom_Click"
+                                    Content="Random"
+                                    Style="{StaticResource RoundButton}"
+                                    ></Button>
+                            </StackPanel>
+                            <Grid Grid.Row="1">
+                                <local:Scoreboard x:Name="scoreTable"
+                                                  >
+                                </local:Scoreboard>
+                            </Grid>
+                        </Grid>
                     </TabItem>
                 </TabControl>
             </DockPanel>

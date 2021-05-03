@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Judge.Supports
@@ -76,7 +76,7 @@ namespace Judge.Supports
             return new CompileStatus()
             {
                 Success = (result.ExitCode == 0),
-                Message = result.Stderr,
+                Message = result.Stderr + result.Stdout,
                 OutputFileName = ExecuteName.Replace("$NAME$", Path.GetFileNameWithoutExtension(fileName)),
             };
         }
@@ -110,42 +110,45 @@ namespace Judge.Supports
 
         public bool Contains(string extension)
         {
-            return compilersMap.ContainsKey(extension.ToLower());
+            string ext = extension.ToLower();
+            foreach (Compiler p in compilersMap.Values)
+            {
+                if (p.Extension.ToLower() == ext)
+                    return true;
+            }
+            return false;
         }
 
-        public Compiler this[string extention]
+        public List<Compiler> this[string extention]
         {
             get
             {
-                return compilersMap[extention.ToLower()];
+                string ext = extention.ToLower();
+                List<Compiler> compilers = new List<Compiler>();
+                foreach (Compiler p in compilersMap.Values)
+                {
+                    if (p.Extension.ToLower() == ext)
+                    {
+                        compilers.Add(p);
+                    }
+                }
+                return compilers;
             }
         }
 
-        public Compiler FindCompiler(string fileName)
+        public void UpdateCompiler(List<Compiler> compilers)
         {
-            string ext = Path.GetExtension(fileName);
-            if (this.Contains(ext))
-                return this[ext];
-            return null;
+            compilersMap.Clear();
+            for (int i = 0; i < compilers.Count; ++i)
+            {
+                compilersMap.Add(compilers[i].Name.ToLower(), compilers[i]);
+            }
+            SaveCompilerConfig();
         }
 
         public List<Compiler> GetCompilers()
         {
             return compilersMap.Values.ToList();
-        }
-
-        public void CreateNewCompiler(Compiler compiler)
-        {
-            if (this.Contains(compiler.Extension.ToLower()))
-                throw new System.Exception(string.Format("Compiler for {0} is existed", compiler.Extension));
-            compilersMap.Add(compiler.Extension.ToLower(), compiler);
-        }
-
-        public void RemoveCompiler(string extension)
-        {
-            extension = extension.ToLower();
-            if (this.Contains(extension))
-                compilersMap.Remove(extension);
         }
 
         private void LoadCompilerConfig()
@@ -159,8 +162,8 @@ namespace Judge.Supports
                     compilersMap.Clear();
                     for (int i = 0; i < compilers.Count; ++i)
                     {
-                        compilers[i].Extension = compilers[i].Extension.ToLower(); //mark
-                        compilersMap[compilers[i].Extension.ToLower()] = compilers[i];
+                        compilers[i].Extension = compilers[i].Extension.ToLower();
+                        compilersMap[compilers[i].Name.ToLower()] = compilers[i];
                     }
                 }
             }
@@ -171,7 +174,7 @@ namespace Judge.Supports
             }
             Log.print(LogType.Info, "Loaded compiler config");
         }
-        
+
         public void SaveCompilerConfig()
         {
             using (TextWriter textWriter = new StreamWriter(FS.JudgeCompilerConfig))

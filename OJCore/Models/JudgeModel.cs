@@ -59,6 +59,7 @@
                 "ProblemID INTEGER NOT NULL, " +
                 "UserID    INTEGER NOT NULL, " +
                 "CompileMessage    TEXT, " +
+                "Status    TEXT, " +
                 "Language   TEXT, " +
                 "FOREIGN KEY(UserID) REFERENCES Users(ID) ON DELETE CASCADE ON UPDATE CASCADE, " +
                 "FOREIGN KEY(ProblemID) REFERENCES Problems(ID) ON DELETE CASCADE ON UPDATE CASCADE, " +
@@ -195,18 +196,30 @@
         /// <param name="userName"></param>
         /// <param name="compileMessage"></param>
         /// <returns>Return new submission_id</returns>
-        public int CreateNewSubmission(string problemName, string userName, string compileMessage, string language)
+        public int CreateNewSubmission(string problemName, string userName, string compileMessage, string status, string language)
         {
-            string query = "INSERT INTO Submissions(ProblemID, UserID, CompileMessage, Language) " +
+            string query = "INSERT INTO Submissions(ProblemID, UserID, CompileMessage, Status, Language) " +
                 "VALUES" +
                 "(" +
                 "   (SELECT ID FROM Problems WHERE ProblemName = @problemName), " +
                 "	(SELECT ID FROM Users WHERE UserName = @userName), " +
                 "	@compileMessage, " +
+                "	@status, " +
                 "	@language " +
                 ");" +
                 "SELECT sqlite_sequence.seq from sqlite_sequence " +
                 "WHERE sqlite_sequence.name = 'Submissions';";
+            string[] listNewLine = new string[] { Environment.NewLine, "\n", "\r" };
+            for (int i = 0; i < listNewLine.Length; ++i) {
+                string pattern = listNewLine[i];
+                for (int j = 0; j < 5; ++j)
+                {
+                    pattern = pattern + listNewLine[i];
+                    compileMessage = compileMessage.Replace(pattern, Environment.NewLine);
+                }
+            }
+            compileMessage = compileMessage.Trim('\r');
+            compileMessage = compileMessage.Trim('\n');
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
                 command.Parameters.AddRange(new SQLiteParameter[]
@@ -214,6 +227,7 @@
                     new SQLiteParameter("@compileMessage", compileMessage),
                     new SQLiteParameter("@problemName", problemName),
                     new SQLiteParameter("@userName", userName),
+                    new SQLiteParameter("@status", status),
                     new SQLiteParameter("@language", language)
                 });
                 return Convert.ToInt32(command.ExecuteScalar());
@@ -292,7 +306,7 @@
         private List<Submission> GetAllSubmissionsData()
         {
             List<Submission> result = new List<Submission>();
-            string query = "SELECT Problems.ProblemName, Users.UserName, SUM(IFNULL(SubmissionTestcaseResults.Points, 0.0)) " +
+            string query = "SELECT Problems.ProblemName, Users.UserName, Submissions.Status,SUM(IFNULL(SubmissionTestcaseResults.Points, 0.0)) " +
                 "FROM Submissions " +
                 "LEFT OUTER JOIN SubmissionTestcaseResults " +
                 "    ON Submissions.ID = SubmissionTestcaseResults.SubmissionID " +
@@ -314,14 +328,66 @@
                     {
                         ProblemName = reader.GetString(0),
                         UserName = reader.GetString(1),
-                        Points = reader.GetDouble(2)
+                        Status = reader.GetString(2),
+                        Points = reader.GetDouble(3)
                     });
                 }
             }
             return result;
         }
 
-        public void FillScoreboard(DataSet dataSet, double DefaultValueIfNull = 0.0)
+        public SubmissionStatus GetSubmissionStatus(string problemName, string userName)
+        {
+            SubmissionStatus result = new SubmissionStatus()
+            {
+                ProblemName = problemName,
+                UserName = userName
+            };
+            string query = "SELECT CompileMessage " +
+                "FROM Submissions " +
+                "INNER JOIN Problems " +
+                "    ON Problems.ID = Submissions.ProblemID " +
+                "INNER JOIN Users " +
+                "    ON Users.ID = Submissions.UserID " +
+                "WHERE Problems.ProblemName = @problemName AND Users.UserName = @userName";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
+            {
+                command.Parameters.Add(new SQLiteParameter("@userName", userName));
+                command.Parameters.Add(new SQLiteParameter("@problemName", problemName));
+                result.CompileMessage = (string)(command.ExecuteScalar() ?? "");
+            }
+            query = "SELECT Testcase, Points, SubmissionTestcaseResults.Status, TimeExecuted, MemoryUsed " +
+                "FROM SubmissionTestcaseResults " +
+                "INNER JOIN Submissions " +
+                "    ON Submissions.ID = SubmissionTestcaseResults.SubmissionID " +
+                "INNER JOIN Problems " +
+                "    ON Problems.ID = Submissions.ProblemID " +
+                "INNER JOIN Users " +
+                "    ON Users.ID = Submissions.UserID " +
+                "WHERE Problems.ProblemName = @problemName AND Users.UserName = @userName";
+            using (SQLiteCommand command = new SQLiteCommand(query, connection))
+            {
+                command.Parameters.Add(new SQLiteParameter("@userName", userName));
+                command.Parameters.Add(new SQLiteParameter("@problemName", problemName));
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.TestcaseResults.Add(new SubmissionTestcaseResult()
+                    {
+                        ProblemName = problemName,
+                        UserName = userName,
+                        Points = reader.GetDouble(1),
+                        Status = reader.GetString(2),
+                        TestcaseName = reader.GetString(0),
+                        TimeExecuted = reader.GetInt32(3),
+                        MemoryUsed = reader.GetInt32(4)
+                    });
+                }
+            }
+            return result;
+        }
+
+        public void FillScoreboard(DataSet dataSet)
         {
             //Init
             DeleteAllDuplicateSubmissions();
@@ -333,14 +399,14 @@
             SortedList<string, int> usersMap = new SortedList<string, int>();
 
             //Init columns
-            scoreBoard.Columns.Add("#");
+            scoreBoard.Columns.Add("Thí sinh");
             for (int i = 0; i < problems.Count; ++i)
             {
                 scoreBoard.Columns.Add(problems[i]);
-                scoreBoard.Columns[i + 1].DefaultValue = DefaultValueIfNull;
+                scoreBoard.Columns[i + 1].DefaultValue = "";
                 problemsMap.Add(problems[i], i + 1);
             }
-            scoreBoard.Columns.Add("Total score");
+            scoreBoard.Columns.Add("Tổng điểm");
 
             //Init rows
             for (int i = 0; i < users.Count; ++i)
@@ -358,13 +424,25 @@
             {
                 int pid = problemsMap[submissions[i].ProblemName];
                 int uid = usersMap[submissions[i].UserName];
-                scoreBoard.Rows[uid][pid] = submissions[i].Points;
-                totalScore[uid] += submissions[i].Points;
+                if (!string.IsNullOrEmpty(submissions[i].Status))
+                {
+                    if (submissions[i].Status == "MS")
+                        scoreBoard.Rows[uid][pid] = "Không có bài";
+                    else if (submissions[i].Status == "CM")
+                        scoreBoard.Rows[uid][pid] = "Không biên dịch được";
+                    else if (submissions[i].Status == "CE")
+                        scoreBoard.Rows[uid][pid] = "Dịch lỗi";
+                    else if (submissions[i].Status == "OK")
+                    {
+                        scoreBoard.Rows[uid][pid] = submissions[i].Points.ToString("0.00");
+                        totalScore[uid] += submissions[i].Points;
+                    }
+                }
             }
-            
+
             for (int i = 0; i < users.Count; ++i)
             {
-                scoreBoard.Rows[i][scoreBoard.Columns.Count - 1] = totalScore[i];
+                scoreBoard.Rows[i][scoreBoard.Columns.Count - 1] = totalScore[i].ToString("0.00");
             }
 
             //Finish

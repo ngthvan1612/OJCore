@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:JudgeWPF"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="CompilerManager" Height="450" Width="800">
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
+        Icon="Resources/check-7062.png"
+        Title="Thiết lập trình biên dịch" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -31,7 +34,9 @@
             <Button Content="Lưu" Style="{StaticResource RoundButton}"
                     x:Name="btnSave"
                     Click="btnSave_Click"/>
-            <Button Content="Hủy" Style="{StaticResource RoundButton}" />
+            <Button Content="Hủy" Style="{StaticResource RoundButton}"
+                    x:Name="btnCancel"
+                    Click="btnCancel_Click"/>
         </StackPanel>
     </Grid>
 </Window>

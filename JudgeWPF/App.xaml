@@ -5,6 +5,54 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <Style x:Key="mainMenuTop" TargetType="MenuItem">
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="FontSize" Value="15px"/>
+            </Style>
+            <Style x:Key="mainMenuSub" TargetType="MenuItem">
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="FontSize" Value="15px"/>
+            </Style>
+            <!--<Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="15px" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="DarkBlue"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>-->
+            <Style TargetType="DataGridCell">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                            <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Padding" Value="0, 5, 0, 5" />
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            </Style>
+            <Style x:Key="dataGridColumnHeader_User" TargetType="DataGridColumnHeader">
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="15px"/>
+                <Setter Property="Foreground" Value="Orange" />
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
+            <Style x:Key="dataGridColumnHeader_Problem" TargetType="DataGridColumnHeader">
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="FontSize" Value="15px"/>
+                <Setter Property="FontStyle" Value="Italic" />
+                <Setter Property="Foreground" Value="SlateBlue" />
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
             <Style x:Key="LabelBeforeTextBox" TargetType="Label">
                 <Setter Property="Foreground" Value="Red" />
                 <Setter Property="FontWeight" Value="Bold" />

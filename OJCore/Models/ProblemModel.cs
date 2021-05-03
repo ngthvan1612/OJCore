@@ -11,7 +11,6 @@ namespace Judge.Models
     using System.Text;
     using System.Text.Json;
     using System.Text.Json.Serialization;
-    using System.Windows.Forms;
 
     public class Testcase : INotifyPropertyChanged
     {

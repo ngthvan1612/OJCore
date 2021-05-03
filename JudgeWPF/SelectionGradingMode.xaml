@@ -9,6 +9,8 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         KeyDown="Window_KeyDown"
+        Icon="Resources/check-7062.png"
+        ShowInTaskbar="False"
         SizeToContent="WidthAndHeight"
         Title="Chấm bài">
     <Window.Resources>

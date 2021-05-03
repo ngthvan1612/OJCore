@@ -37,15 +37,16 @@ namespace Judge.Models
             return JsonSerializer.Serialize(this, new JsonSerializerOptions() { WriteIndented = true });
         }
 
-        public UserSubmission GetSubmission(string problemName)
+        public List<UserSubmission> GetSubmission(string problemName)
         {
+            List<UserSubmission> result = new List<UserSubmission>();
             problemName = problemName.ToLower();
             for (int i = 0; i < UserSubmissions.Count; ++i)
             {
                 if (UserSubmissions[i].Name.ToLower() == problemName)
-                    return UserSubmissions[i];
+                    result.Add(UserSubmissions[i]);
             }
-            return null;
+            return result;
         }
     }
 
