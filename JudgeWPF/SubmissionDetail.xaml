@@ -28,22 +28,29 @@
             <TabItem Header="Chi tiết chấm" IsSelected="True">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="2*"/>
                         <RowDefinition Height="4*"></RowDefinition>
                     </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Foreground="Red"
+                               Margin="4"
+                               x:Name="tbCompilerName">
+                    </TextBlock>
                     <RichTextBox
-                        Grid.Row="0"
+                        Grid.Row="1"
                         x:Name="compileMessage"
                         Style="{StaticResource editorStyle}"/>
                     <DataGrid
-                        HorizontalContentAlignment="Center"
+                        TextBlock.TextAlignment="Center"
                         HorizontalScrollBarVisibility="Visible"
                         VerticalScrollBarVisibility="Visible"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         IsReadOnly="True"
                         FontFamily="Arial"
                         FontSize="15"
                         ColumnWidth="*"
+                        AutoGeneratingColumn="testcaseResult_AutoGeneratingColumn"
                         x:Name="testcaseResult">
                     </DataGrid>
                 </Grid>

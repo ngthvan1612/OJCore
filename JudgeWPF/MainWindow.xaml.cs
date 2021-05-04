@@ -50,10 +50,6 @@ namespace JudgeWPF
             GradeCommand.InputGestures.Add(new KeyGesture(Key.F9));
             GotoUserCommand.InputGestures.Add(new KeyGesture(Key.F, ModifierKeys.Control));
             InitializeComponent();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
             judger = new Judger();
             judger.OnUpdateScore += Judger_OnUpdateScore;
             scoreTable.PushProblems(new List<string>() { "sumAB", "mulAB", "preSum" });
@@ -64,6 +60,12 @@ namespace JudgeWPF
             }
             scoreTable.PushUsers(users);
             scoreTable.GenRandom();
+            judger.ConvertExitCodeNonZeroToRTE = false;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
@@ -75,17 +77,24 @@ namespace JudgeWPF
         {
             Dispatcher.Invoke(new Action(() =>
             {
-                if (args.Status == "OK")
-                    scoreBoard.Change(args.ProblemName, args.UserName, args.Points.ToString("0.00"));
-                else if (args.Status == "CE")
-                    scoreBoard.Change(args.ProblemName, args.UserName, "Dịch lỗi");
-                else if (args.Status == "MS")
-                    scoreBoard.Change(args.ProblemName, args.UserName, "Không có bài");
-                else if (args.Status == "CM")
-                    scoreBoard.Change(args.ProblemName, args.UserName, "Không biên dịch được");
-                else if (args.Status == "RM")
-                    scoreBoard.Change(args.ProblemName, args.UserName, "");
-                else throw new Exception();
+                switch (args.Status)
+                {
+                    case JudgeUpdateScoreType.OK:
+                        scoreBoard.Change(args.ProblemName, args.UserName, args.Points.ToString("0.00"));
+                        break;
+                    case JudgeUpdateScoreType.CompileError:
+                        scoreBoard.Change(args.ProblemName, args.UserName, "Dịch lỗi");
+                        break;
+                    case JudgeUpdateScoreType.ExecuteNotFound:
+                        scoreBoard.Change(args.ProblemName, args.UserName, "Không tìm thấy file thực thi");
+                        break;
+                    case JudgeUpdateScoreType.RemoveSubmission:
+                        scoreBoard.Change(args.ProblemName, args.UserName, "");
+                        break;
+                    case JudgeUpdateScoreType.SubmissionNotFound:
+                        scoreBoard.Change(args.ProblemName, args.UserName, "Không có bài");
+                        break;
+                }
             }));
         }
 

@@ -111,8 +111,6 @@
     </Compile>
     <Compile Include="Sys\FS.cs" />
     <Compile Include="Models\JudgeModel.cs" />
-    <Compile Include="Models\SubmissionTestcaseResultModel.cs" />
-    <Compile Include="Models\SubmissionModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Models\ProblemModel.cs" />
     <Compile Include="Program.cs" />
@@ -127,6 +125,7 @@
     <Compile Include="Supports\ExportManager.cs" />
     <Compile Include="Supports\Log.cs" />
     <Compile Include="Supports\Sandbox.cs" />
+    <Compile Include="Types\JudgeTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

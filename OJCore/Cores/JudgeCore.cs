@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Judge.Exceptions;
+using Judge.Models;
+using Judge.Supports;
+using Judge.Sys;
+using System.Data;
+using System.Threading;
+using Judge.Types;
 
 namespace Judge.Cores
 {
-    using Exceptions;
-    using Models;
-    using Supports;
-    using Sys;
-    using System.Data;
-    using System.Threading;
-    using System.Windows.Forms;
-
     public enum JudgeGradingEventType
     {
         EndGradingSubmission = -3,
@@ -39,11 +38,20 @@ namespace Judge.Cores
         public double Points { get; set; }
     }
 
+    public enum JudgeUpdateScoreType
+    {
+        OK,
+        CompileError,
+        SubmissionNotFound,
+        ExecuteNotFound,
+        RemoveSubmission
+    }
+
     public class JudgeUpdateScoreSubmissionEvent : EventArgs
     {
         public string ProblemName { get; set; }
         public string UserName { get; set; }
-        public string Status { get; set; }
+        public JudgeUpdateScoreType Status { get; set; }
         public double Points { get; set; }
     }
 
@@ -67,6 +75,8 @@ namespace Judge.Cores
         private readonly string workSpace;
         public int Totaltestcases { get; private set; } = 0;
         public int TestcasesGraded { get; private set; } = 0;
+
+        public bool ConvertExitCodeNonZeroToRTE { get; set; } = false;
 
         private object _IsGrading = false;
         public bool IsGrading
@@ -213,9 +223,9 @@ namespace Judge.Cores
             IsOpen = false;
         }
 
-        public void SaveContest()
+        public void SaveContest(string output = "contest.ojdb")
         {
-            judgeModel.Save(FS.Combine(CurrentContestDir, "contest.ojdb"));
+            judgeModel.Save(FS.Combine(CurrentContestDir, output));
         }
 
         #endregion
@@ -225,11 +235,6 @@ namespace Judge.Cores
         public Problem GetProblemByName(string problemName)
         {
             return problemModel[problemName];
-        }
-
-        public void UpdateProblemSetting(Problem problem)
-        {
-            problemModel[problem.ProblemName] = problem;
         }
 
         public List<Compiler> GetCompilers()
@@ -246,12 +251,9 @@ namespace Judge.Cores
             IsGrading = false;
         }
 
-        private double GradeOneSubmission(string problemName, string userName, out string status)
+        private double GradeOneSubmission(string problemName, string userName, out JudgeUpdateScoreType status)
         {
-            status = "";
-            if (string.IsNullOrEmpty(CurrentContestDir))
-                throw new Exception("No contest openned");
-
+            status = JudgeUpdateScoreType.OK;
             int total = problemModel[problemName].Testcases.Count;
 
             //Remove old submission
@@ -260,7 +262,7 @@ namespace Judge.Cores
             {
                 ProblemName = problemName,
                 UserName = userName,
-                Status = "RM",
+                Status = JudgeUpdateScoreType.RemoveSubmission,
                 Points = 0,
             });
 
@@ -285,7 +287,7 @@ namespace Judge.Cores
                 });
                 TestcasesGraded += total;
                 judgeModel.CreateNewSubmission(problemName, userName, "Not found submission!", "MS", "(null)");
-                status = "MS";
+                status = JudgeUpdateScoreType.SubmissionNotFound;
                 return 0;
             }
 
@@ -356,7 +358,7 @@ namespace Judge.Cores
                 });
                 TestcasesGraded += total;
                 judgeModel.CreateNewSubmission(problemName, userName, "Not found submission!", "MS", "(null)");
-                status = "MS";
+                status = JudgeUpdateScoreType.SubmissionNotFound;
                 return 0;
             }
 
@@ -373,7 +375,7 @@ namespace Judge.Cores
                 TestcasesGraded += total;
                 FS.DeleteDirectory(currentDir);
                 judgeModel.CreateNewSubmission(problemName, userName, compileResult.Message, "CE", compiler.Name);
-                status = "CE";
+                status = JudgeUpdateScoreType.CompileError;
                 return 0;
             }
 
@@ -385,6 +387,26 @@ namespace Judge.Cores
                 ProblemName = problemName,
                 Status = compiler.Name
             });
+
+            //Check execute exist
+            if (!FS.FileExist(FS.Combine(currentUserDir, compileResult.OutputFileName)))
+            {
+                OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
+                {
+                    ProblemName = problemName,
+                    UserName = userName,
+                    Event = JudgeGradingEventType.SubmissionNotFound
+                });
+                OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
+                {
+                    ProblemName = problemName,
+                    UserName = userName,
+                    Event = JudgeGradingEventType.NotFoundExecute
+                });
+                judgeModel.CreateNewSubmission(problemName, userName, "Not found execute", "NFE", compiler.Name);
+                status = JudgeUpdateScoreType.ExecuteNotFound;
+                return 0;
+            }
 
             //3. Run testcase
             List<SubmissionTestcaseResult> gradingTestcaseResult = new List<SubmissionTestcaseResult>();
@@ -401,16 +423,6 @@ namespace Judge.Cores
                 FS.CreateDirectory(currentTestDir);
 
                 //copy execute
-                if (!FS.FileExist(FS.Combine(currentUserDir, compileResult.OutputFileName)))
-                {
-                    OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
-                    {
-                        ProblemName = problemName,
-                        UserName = userName,
-                        Event = JudgeGradingEventType.NotFoundExecute
-                    });
-                    return 0;
-                }
                 FS.CopyFile(FS.Combine(currentUserDir, compileResult.OutputFileName),
                     FS.Combine(currentTestDir, compileResult.OutputFileName));
 
@@ -422,17 +434,14 @@ namespace Judge.Cores
                 }
 
                 //run
-                OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
-                {
-                    Event = JudgeGradingEventType.RuningTest
-                });
                 var running_status = sandbox.StartRun(-1,
                     ('"' + compiler.RunProgram + '"' + " " + compiler.RunArgs).Replace("$NAME$", submission.Name),
                     currentTestDir,
                     problem.Timelimit,
                     problem.Memorylimit * 1024,
                     problem.UseStdin ? sourceInput : inputRun,
-                    problem.UseStdout ? destOutput : null
+                    problem.UseStdout ? destOutput : null,
+                    ConvertExitCodeNonZeroToRTE
                 );
 
                 if (!IsGrading) //cancel
@@ -556,7 +565,7 @@ namespace Judge.Cores
             //4. Clean
             FS.DeleteDirectory(currentDir);
             OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent() { Event = JudgeGradingEventType.EndGradingSubmission });
-            status = "OK";
+            status = JudgeUpdateScoreType.OK;
             return totalScore;
         }
 
@@ -575,8 +584,7 @@ namespace Judge.Cores
             new Thread(new ThreadStart(() =>
             {
                 IsGrading = true;
-                string status = "";
-                double totalScore = GradeOneSubmission(problemName, userName, out status);
+                double totalScore = GradeOneSubmission(problemName, userName, out JudgeUpdateScoreType status);
                 if (IsGrading)
                 {
                     OnUpdateScore?.Invoke(this, new JudgeUpdateScoreSubmissionEvent()
@@ -607,8 +615,7 @@ namespace Judge.Cores
                 Totaltestcases = problemModel[problemName].Testcases.Count * listUsers.Count;
                 foreach (string userName in listUsers)
                 {
-                    string status = "";
-                    double totalScore = GradeOneSubmission(problemName, userName, out status);
+                    double totalScore = GradeOneSubmission(problemName, userName, out JudgeUpdateScoreType status);
                     if (!IsGrading)
                     {
                         break;
@@ -645,8 +652,7 @@ namespace Judge.Cores
                     Totaltestcases += p.Testcases.Count;
                 foreach (string problemName in listProblems)
                 {
-                    string status = "";
-                    double totalScore = GradeOneSubmission(problemName, userName, out status);
+                    double totalScore = GradeOneSubmission(problemName, userName, out JudgeUpdateScoreType status);
                     if (!IsGrading)
                     {
                         break;
@@ -684,8 +690,7 @@ namespace Judge.Cores
                 {
                     for (int j = 0; j < problems.Count; ++j)
                     {
-                        string status = "";
-                        double totalScore = GradeOneSubmission(problems[j], users[i], out status);
+                        double totalScore = GradeOneSubmission(problems[j], users[i], out JudgeUpdateScoreType status);
                         if (!IsGrading)
                         {
                             i = users.Count;

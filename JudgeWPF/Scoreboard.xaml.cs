@@ -61,15 +61,7 @@ namespace JudgeWPF
         private void MouseRightButtonClicked(object sender, MouseButtonEventArgs e)
         {
             DependencyObject dep = (DependencyObject)e.OriginalSource;
-            
-            //DependencyObject tmp = dep;
-            //string s = "";
-            //while (tmp != null)
-            //{
-            //    s += tmp.GetType().Name + " -> ";
-            //    tmp = VisualTreeHelper.GetParent(tmp);
-            //}
-            //MessageBox.Show(s);
+
             while ((dep != null) && !(dep is DataGridCell || dep is DataGridColumnHeader))
             {
                 dep = VisualTreeHelper.GetParent(dep);
@@ -83,10 +75,6 @@ namespace JudgeWPF
                 ContextMenu cm = FindResource("cmSelectedProblem") as ContextMenu;
                 cm.PlacementTarget = this;
                 cm.IsOpen = true;
-                //OnProblemClicked?.Invoke(this, new ScoreboardClickedEvent()
-                //{
-                //    Data = header.Content as string
-                //});
             }
             else if (dep is DataGridCell)
             {
@@ -113,10 +101,6 @@ namespace JudgeWPF
                     cm.PlacementTarget = this;
                     cm.IsOpen = true;
                 }
-                //OnSubmissionClicked?.Invoke(this, new ScoreboardClickedEvent()
-                //{
-                //    Data = source.Columns[col_index].ColumnName + " $ " + source.Rows[row_index][0].ToString()
-                //});
             }
         }
 
@@ -228,8 +212,7 @@ namespace JudgeWPF
             DataRow dr = (scoreDataGrid.Items[listUsers[user]] as DataRowView).Row;
             for (int i = 1; i < dr.ItemArray.Length - 1; ++i)
             {
-                double tmp = 0;
-                if (!double.TryParse(dr.ItemArray[i].ToString(), out tmp))
+                if (!double.TryParse(dr.ItemArray[i].ToString(), out double tmp))
                     tmp = 0;
                 if (double.IsNaN(tmp))
                     tmp = 0;

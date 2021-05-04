@@ -1,4 +1,4 @@
-﻿using Judge.Models;
+﻿using Judge.Types;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;

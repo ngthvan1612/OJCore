@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SQLite;
+    using Judge.Types;
 
     /// <summary>
     /// Thêm, sửa xóa, cập nhật, lưu, mở thông tin chấm điểm từ CSDL
@@ -321,16 +322,18 @@
                 ";";
             using (SQLiteCommand command = new SQLiteCommand(query, connection))
             {
-                SQLiteDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    result.Add(new Submission()
+                    while (reader.Read())
                     {
-                        ProblemName = reader.GetString(0),
-                        UserName = reader.GetString(1),
-                        Status = reader.GetString(2),
-                        Points = reader.GetDouble(3)
-                    });
+                        result.Add(new Submission()
+                        {
+                            ProblemName = reader.GetString(0),
+                            UserName = reader.GetString(1),
+                            Status = reader.GetString(2),
+                            Points = reader.GetDouble(3)
+                        });
+                    }
                 }
             }
             return result;
@@ -343,7 +346,7 @@
                 ProblemName = problemName,
                 UserName = userName
             };
-            string query = "SELECT CompileMessage " +
+            string query = "SELECT CompileMessage, Language " +
                 "FROM Submissions " +
                 "INNER JOIN Problems " +
                 "    ON Problems.ID = Submissions.ProblemID " +
@@ -354,7 +357,15 @@
             {
                 command.Parameters.Add(new SQLiteParameter("@userName", userName));
                 command.Parameters.Add(new SQLiteParameter("@problemName", problemName));
-                result.CompileMessage = (string)(command.ExecuteScalar() ?? "");
+                //result.CompileMessage = (string)(command.ExecuteScalar() ?? "");
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        result.CompileMessage = reader.GetString(0);
+                        result.CompilerName = reader.GetString(1);
+                    }
+                }
             }
             query = "SELECT Testcase, Points, SubmissionTestcaseResults.Status, TimeExecuted, MemoryUsed " +
                 "FROM SubmissionTestcaseResults " +
@@ -369,19 +380,21 @@
             {
                 command.Parameters.Add(new SQLiteParameter("@userName", userName));
                 command.Parameters.Add(new SQLiteParameter("@problemName", problemName));
-                SQLiteDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SQLiteDataReader reader = command.ExecuteReader())
                 {
-                    result.TestcaseResults.Add(new SubmissionTestcaseResult()
+                    while (reader.Read())
                     {
-                        ProblemName = problemName,
-                        UserName = userName,
-                        Points = reader.GetDouble(1),
-                        Status = reader.GetString(2),
-                        TestcaseName = reader.GetString(0),
-                        TimeExecuted = reader.GetInt32(3),
-                        MemoryUsed = reader.GetInt32(4)
-                    });
+                        result.TestcaseResults.Add(new SubmissionTestcaseResult()
+                        {
+                            ProblemName = problemName,
+                            UserName = userName,
+                            Points = reader.GetDouble(1),
+                            Status = reader.GetString(2),
+                            TestcaseName = reader.GetString(0),
+                            TimeExecuted = reader.GetInt32(3),
+                            MemoryUsed = reader.GetInt32(4)
+                        });
+                    }
                 }
             }
             return result;
@@ -432,11 +445,14 @@
                         scoreBoard.Rows[uid][pid] = "Không biên dịch được";
                     else if (submissions[i].Status == "CE")
                         scoreBoard.Rows[uid][pid] = "Dịch lỗi";
+                    else if (submissions[i].Status == "NFE")
+                        scoreBoard.Rows[uid][pid] = "Không tìm thấy file thực thi";
                     else if (submissions[i].Status == "OK")
                     {
                         scoreBoard.Rows[uid][pid] = submissions[i].Points.ToString("0.00");
                         totalScore[uid] += submissions[i].Points;
                     }
+                    else throw new Exception(submissions[i].ProblemName + " " + submissions[i].UserName);
                 }
             }
 

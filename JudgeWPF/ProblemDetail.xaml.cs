@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace JudgeWPF
 {
-    using Judge.Models;
+    using Judge.Types;
     using System.Text.RegularExpressions;
 
     /// <summary>

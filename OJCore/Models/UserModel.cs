@@ -1,55 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Judge.Exceptions;
+using Judge.Supports;
+using System.IO;
+using Judge.Types;
 
 namespace Judge.Models
 {
-    using Exceptions;
-    using Judge.Supports;
-    using System.IO;
-    using System.Text.Json;
-    using System.Text.Json.Serialization;
-
-    public class UserSubmission
-    {
-        public string Name { get; set; } = "";
-        public string Extension { get; set; } = "";
-
-        /// <summary>
-        /// return name + extension
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return Name + Extension;
-        }
-    }
-
-    public class User
-    {
-        [JsonPropertyName("UserName")]
-        public string UserName { get; set; }
-
-        [JsonPropertyName("UserSubmissions")]
-        public List<UserSubmission> UserSubmissions { get; set; } = new List<UserSubmission>();
-
-        public override string ToString()
-        {
-            return JsonSerializer.Serialize(this, new JsonSerializerOptions() { WriteIndented = true });
-        }
-
-        public List<UserSubmission> GetSubmission(string problemName)
-        {
-            List<UserSubmission> result = new List<UserSubmission>();
-            problemName = problemName.ToLower();
-            for (int i = 0; i < UserSubmissions.Count; ++i)
-            {
-                if (UserSubmissions[i].Name.ToLower() == problemName)
-                    result.Add(UserSubmissions[i]);
-            }
-            return result;
-        }
-    }
-
     public class UserModel
     {
         private SortedList<string, User> usersMap;

@@ -95,6 +95,11 @@
             </Menu>
             <DockPanel>
                 <TabControl DockPanel.Dock="Top">
+                    <TabControl.Resources>
+                        <Style TargetType="{x:Type TabPanel}">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                    </TabControl.Resources>
                     <TabItem x:Name="tbScoreBoard" IsSelected="True">
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal">
@@ -104,21 +109,6 @@
                                            FontFamily="Arial"/>
                             </StackPanel>
                         </TabItem.Header>
-                        <!--<DataGrid x:Name="scoreBoard"
-                                  Margin="0, 4, 0, 0"
-                                  AutoGenerateColumns="False"
-                                  IsReadOnly="True"
-                                  CanUserDeleteRows="False"
-                                  CanUserAddRows="False"
-                                  CanUserResizeRows="False"
-                                  CanUserResizeColumns="False"
-                                  CanUserReorderColumns="False"
-                                  CanUserSortColumns="False"
-                                  ColumnWidth="*"
-                                  SelectionUnit="FullRow"
-                                  TextBlock.TextAlignment="Center"
-                            >
-                        </DataGrid>-->
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
@@ -126,11 +116,17 @@
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" Orientation="Horizontal">
                                 <Label Style="{StaticResource LabelBeforeTextBox}"
-                                   Content="Tìm thí sinh"
+                                       Content="Tìm thí sinh"
+                                       FontSize="18"
+                                       FontFamily="Arial"
+                                       FontWeight="Normal"
+                                       Margin="2, 2, 4, 2"
+                                       Padding="0"
                                    />
                                 <TextBox
                                     x:Name="tbGotoUser"
                                     HorizontalAlignment="Left"
+                                    FontSize="18"
                                     MinWidth="120"
                                     Width="Auto"
                                     PreviewKeyDown="tbGotoUser_PreviewKeyDown"

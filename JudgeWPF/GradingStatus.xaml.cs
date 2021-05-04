@@ -103,7 +103,7 @@ namespace JudgeWPF
                         case "RTE": status = "Chạy sinh lỗi"; break;
                         default: status = "Lỗi không xác định"; break;
                     }
-                    SendData(string.Format("[{7}] {0}.{1}.{2} \u25BA [{3}, {4}, {5}ms, {6}KB]", args.UserName, args.ProblemName,
+                    SendData(string.Format("[{7}]\n{0}.{1}.{2} \u25BA [{3}, {4}, {5}ms, {6}KB]", args.UserName, args.ProblemName,
                     args.TestCaseName, status, args.Points, args.TimeExecuted, args.MemoryUsed, currentCompiler), Brushes.Black);
                     break;
                 case JudgeGradingEventType.Complete:

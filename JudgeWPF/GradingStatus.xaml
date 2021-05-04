@@ -28,7 +28,9 @@
                 <TextBlock x:Name="tbStatus"
                            HorizontalAlignment="Center"
                            FontFamily="Arial"
-                           FontSize="17"/>
+                           FontSize="17"
+                           TextBlock.TextAlignment="Center"
+                           Text="(null)"/>
                 <ProgressBar x:Name="gradingProcess"
                              Value="60"
                              Width="400"

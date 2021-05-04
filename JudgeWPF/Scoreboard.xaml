@@ -35,6 +35,8 @@
     </UserControl.Resources>
     <Grid>
         <DataGrid x:Name="scoreDataGrid"
+                  IsSynchronizedWithCurrentItem="True"
+                  ScrollViewer.CanContentScroll="False"
                   AutoGenerateColumns="True"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"

@@ -1,6 +1,6 @@
 ﻿{
   "Input": "BAI1.INP",
-  "Output": "BAI1.OUT",
+  "Output": "BAI1.OUt",
   "UseStdin": true,
   "UseStdout": true,
   "Timelimit": 1000,

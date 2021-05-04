@@ -135,13 +135,13 @@ namespace Judge.Supports
             }
         }
 
-        public SandBoxStatus StartRun(int id, string cmd, string workdir, int timeLimit, int memLimit, string input, string output)
+        public SandBoxStatus StartRun(int id, string cmd, string workdir, int timeLimit, int memLimit, string input, string output, bool convertExitCodeNonZerotoRTE)
         {
             int cnt = 0;
             while (true)
             {
                 cnt++;
-                var result = startRun(id, cmd, workdir, timeLimit, memLimit, input, output);
+                var result = startRun(id, cmd, workdir, timeLimit, memLimit, input, output, convertExitCodeNonZerotoRTE);
                 if (result != null)
                 {
                     if (cnt >= 2)
@@ -153,7 +153,7 @@ namespace Judge.Supports
             }
         }
 
-        private SandBoxStatus startRun(int id, string cmd, string workdir, int timeLimit, int memLimit, string input, string output)
+        private SandBoxStatus startRun(int id, string cmd, string workdir, int timeLimit, int memLimit, string input, string output, bool convertExitCodeNonZerotoRTE)
         {
             try
             {
@@ -224,20 +224,16 @@ namespace Judge.Supports
                     }
                     else
                     {
-                        if (match.Success)
+                        if (convertExitCodeNonZerotoRTE && p.ExitCode != 0)
                         {
-                            if (match.Value[0] == 'T')
-                            {
-                                statusType = SandBoxStatusType.TLE;
-                            }
-                            else if (match.Value[0] == 'M')
-                            {
-                                statusType = SandBoxStatusType.MLE;
-                            }
-                            else if (match.Value[0] == 'C')
-                            {
-                                statusType = SandBoxStatusType.RTE;
-                            }
+                            exit_code = p.ExitCode;
+                            statusType = SandBoxStatusType.RTE;
+                        }
+                        else if (match.Success)
+                        {
+                            if (match.Value[0] == 'T') statusType = SandBoxStatusType.TLE;
+                            else if (match.Value[0] == 'M') statusType = SandBoxStatusType.MLE;
+                            else if (match.Value[0] == 'C') statusType = SandBoxStatusType.RTE;
                             else
                             {
                                 string[] lines = File.ReadAllText(statis).Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
@@ -258,24 +254,6 @@ namespace Judge.Supports
                                 }
                                 exit_code = 0;
                                 statusType = SandBoxStatusType.Success;
-                                /*
-                                var matches = Regex.Matches(stdout.Substring(stdout.LastIndexOf("exit code")), "[+-]?\\d*\\.?\\d+");
-                                double[] nums = new double[6];
-                                int zid = 0;
-                                foreach (Match m in matches)
-                                {
-                                    nums[zid++] = Convert.ToDouble(m.Value);
-                                }
-                                exit_code = Convert.ToInt32(Math.Min(nums[0], 1.0 * Int32.MaxValue));
-                                statusType = SandBoxStatusType.Success;
-                                //if (exit_code != 0)
-                                //{
-                                //    statusType = SandBoxStatusType.RTE;
-                                //}
-                                timeExe = nums[1];
-                                memUsed = Convert.ToInt32(Math.Min(nums[4], 1.0 * Int32.MaxValue));
-                                exit_code = 0;
-                                */
                             }
                         }
                         else
