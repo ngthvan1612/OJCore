@@ -100,14 +100,9 @@
                             <Setter Property="HorizontalAlignment" Value="Center" />
                         </Style>
                     </TabControl.Resources>
-                    <TabItem x:Name="tbScoreBoard" IsSelected="True">
-                        <TabItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Bảng điểm"
-                                           FontSize="16"
-                                           FontFamily="Arial"/>
-                            </StackPanel>
-                        </TabItem.Header>
+                    <TabItem x:Name="tbScoreBoard"
+                             IsSelected="True"
+                             Header="Bảng điểm">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
@@ -143,15 +138,7 @@
                             </local:Scoreboard>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="tbTest">
-                        <TabItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Test"
-                                           FontSize="16"
-                                           Foreground="White"
-                                           FontFamily="Arial"/>
-                            </StackPanel>
-                        </TabItem.Header>
+                    <TabItem x:Name="tbTest" Header="Test">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
@@ -169,6 +156,11 @@
                                     Content="Export"
                                     Style="{StaticResource RoundButton}"
                                     ></Button>
+                                <Button
+                                    x:Name="btnTest"
+                                    Click="btnTest_Click"
+                                    Style="{StaticResource RoundButton}"
+                                    >Test MD5 Hash [Time + Random + Guid]</Button>
                             </StackPanel>
                             <Grid Grid.Row="1">
                                 <DataGrid x:Name="datagridTest"

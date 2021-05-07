@@ -80,10 +80,15 @@ namespace JudgeWPF
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            Compiler com = new Compiler();
-            Compilers.Add(com);
-            tcCompilers.Items.Add(CreateNewTab(com));
-            tcCompilers.SelectedIndex = tcCompilers.Items.Count - 1;
+            SelectCompilerTemplate template = new SelectCompilerTemplate();
+            if (template.ShowDialog() == true)
+            {
+
+            }
+            //Compiler com = new Compiler();
+            //Compilers.Add(com);
+            //tcCompilers.Items.Add(CreateNewTab(com));
+            //tcCompilers.SelectedIndex = tcCompilers.Items.Count - 1;
         }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)

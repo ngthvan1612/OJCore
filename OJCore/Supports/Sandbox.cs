@@ -93,10 +93,10 @@ namespace Judge.Supports
 
             foreach (var e in env)
             {
-                psi.EnvironmentVariables[e.Key] = ";" + e.Value;
+                psi.EnvironmentVariables[e.Key] = e.Value;
                 txt += "SET " + e.Key + "=" + e.Value + "\n";
             }
-            File.WriteAllText("out.txt", txt);
+            File.WriteAllText("out.bat", txt);
 
             using (Process p = new Process())
             {

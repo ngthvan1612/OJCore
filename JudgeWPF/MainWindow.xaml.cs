@@ -7,8 +7,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -315,6 +319,28 @@ namespace JudgeWPF
             DataSet dt = new DataSet("sdfhks");
             dt.Tables.Add((datagridTest.ItemsSource as DataView).Table);
             ExportManager.ExportDataSetToExcel(dt);
+        }
+
+        private static readonly Random random = new Random(Guid.NewGuid().GetHashCode());
+
+        private static string GetStartTimeMD5()
+        {
+            byte[] encoded = new UTF8Encoding().GetBytes((Process.GetCurrentProcess().StartTime.Ticks ^ random.Next()).ToString());
+            byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encoded);
+            return Regex.Replace(BitConverter.ToString(hash)
+                .Replace("-", string.Empty), ".{4}", "$0-")
+                .TrimEnd(new char[] { '-' })
+                .ToLower();
+        }
+
+        private void btnTest_Click(object sender, RoutedEventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 20; ++i)
+            {
+                sb.Append(GetStartTimeMD5() + "\n");
+            }
+            MessageBox.Show(sb.ToString());
         }
     }
 }

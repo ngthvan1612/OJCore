@@ -88,12 +88,14 @@
     <Compile Include="CompilerManager.xaml.cs">
       <DependentUpon>CompilerManager.xaml</DependentUpon>
     </Compile>
-    <Compile Include="INotifyPropertyChange.cs" />
     <Compile Include="JudgeInfo.xaml.cs">
       <DependentUpon>JudgeInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Scoreboard.xaml.cs">
       <DependentUpon>Scoreboard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SelectCompilerTemplate.xaml.cs">
+      <DependentUpon>SelectCompilerTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="SelectionGradingMode.xaml.cs">
       <DependentUpon>SelectionGradingMode.xaml</DependentUpon>
@@ -141,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Scoreboard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SelectCompilerTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -210,6 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\check-7062.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Folder-Open-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

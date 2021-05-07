@@ -5,6 +5,22 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <Style x:Key="radioButtonSelectionGradingMode" TargetType="RadioButton">
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="5, 10, 5, 10"/>
+            </Style>
+            <Style x:Key="comboBoxSelectionGradingMode" TargetType="ComboBox">
+                <Setter Property="MinWidth" Value="250"/>
+                <Setter Property="IsTextSearchEnabled" Value="True"/>
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="IsEditable" Value="True"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="5, 0, 5, 0" />
+            </Style>
             <Style x:Key="mainMenuTop" TargetType="MenuItem">
                 <Setter Property="Height" Value="Auto"/>
                 <Setter Property="FontSize" Value="15px"/>
@@ -37,8 +53,7 @@
             <Style x:Key="dataGridColumnHeader_Problem" TargetType="DataGridColumnHeader">
                 <Setter Property="Height" Value="Auto"/>
                 <Setter Property="FontSize" Value="15px"/>
-                <Setter Property="FontStyle" Value="Italic" />
-                <Setter Property="Foreground" Value="SlateBlue" />
+                <Setter Property="Foreground" Value="DarkBlue" />
                 <Setter Property="FontWeight" Value="Bold"/>
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
             </Style>
@@ -51,7 +66,6 @@
             </Style>
             <Style x:Key="LabelBeforeTextBox" TargetType="Label">
                 <Setter Property="Foreground" Value="Red" />
-                <Setter Property="FontWeight" Value="Bold" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="FontSize" Value="17" />
                 <Setter Property="Margin" Value="0, 0, 15, 0"/>
@@ -67,8 +81,8 @@
                 <Setter Property="FontFamily" Value="Consolas"/>
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Margin" Value="0, 2, 5, 2" />
-                <Setter Property="FontSize" Value="17" />
+                <Setter Property="Margin" Value="5, 2, 5, 2" />
+                <Setter Property="FontSize" Value="15" />
             </Style>
             <Style TargetType="TabItem">
                 <Setter Property="FontSize" Value="16"/>

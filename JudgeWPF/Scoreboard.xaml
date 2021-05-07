@@ -51,7 +51,7 @@
                   SelectionMode="Single"
                   SelectionUnit="FullRow"
                   FontSize="17"
-                  FontFamily="Consolas"
+                  FontFamily="Arial"
                   HeadersVisibility="Column">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="CornflowerBlue"/>

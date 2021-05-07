@@ -14,22 +14,7 @@
         SizeToContent="WidthAndHeight"
         Title="Chấm bài">
     <Window.Resources>
-        <Style x:Key="radioButtonSelectionGradingMode" TargetType="RadioButton">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5, 10, 5, 10"/>
-        </Style>
-        <Style x:Key="comboBoxSelectionGradingMode" TargetType="ComboBox">
-            <Setter Property="MinWidth" Value="250"/>
-            <Setter Property="IsTextSearchEnabled" Value="True"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="IsEditable" Value="True"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5, 0, 5, 0" />
-        </Style>
+        
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

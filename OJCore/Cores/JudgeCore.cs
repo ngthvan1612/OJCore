@@ -110,6 +110,7 @@ namespace Judge.Cores
             workSpace = FS.JudgeWorkspace;
             FS.WriteAllBytes(FS.RunEXE, Properties.Resources.run_PCMS2);
             FS.WriteAllBytes(FS.InvokeDLL, Properties.Resources.invoke2_PCMS2);
+            FS.CleanAppData();
         }
 
         #region Load Contest (Problem & User directory)
@@ -741,7 +742,7 @@ namespace Judge.Cores
         #endregion
         public void Dispose()
         {
-            //FS.DeleteDirectory(FS.JudgeTempDirectory);
+            FS.DeleteDirectory(FS.JudgeTempDirectory);
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Judge.Supports
 
         public void LoadEnvironment()
         {
-            //ListEnvironmentVariables.Clear();
+            ListEnvironmentVariables.Clear();
             if (!string.IsNullOrEmpty(CompileProgram))
             {
                 if (!FS.FileExist(CompileProgram))
@@ -68,8 +68,6 @@ namespace Judge.Supports
                 throw new JudgeFileNotFoundException(Environment);
             List<string> env = new List<string>();
             ProcessStartInfo psi = new ProcessStartInfo();
-            psi.EnvironmentVariables.Clear();
-            psi.EnvironmentVariables["OS"] = "Windows_NT";
             psi.UseShellExecute = false;
             psi.CreateNoWindow = true;
             psi.RedirectStandardOutput = true;
@@ -82,7 +80,7 @@ namespace Judge.Supports
             process.Start();
             process.OutputDataReceived += (sender, e) => { if (!string.IsNullOrEmpty(e.Data)) env.Add(e.Data); };
             process.BeginOutputReadLine();
-            process.WaitForExit(2500);
+            process.WaitForExit(10000);
             for (int i = 0; i < env.Count; ++i)
             {
                 int sp = -1;
@@ -99,7 +97,7 @@ namespace Judge.Supports
                 string name = env[i].Substring(0, sp);
                 string val = env[i].Substring(sp + 1);
                 if (ListEnvironmentVariables.ContainsKey(name.ToLower()))
-                    ListEnvironmentVariables[name.ToLower()] += val;
+                    ListEnvironmentVariables[name.ToLower()] += ";" + val;
                 else
                     ListEnvironmentVariables[name.ToLower()] = val;
             }
@@ -116,21 +114,22 @@ namespace Judge.Supports
                 Name = name,
                 RunArgs = RunArgs,
                 RunProgram = RunProgram,
-                Environment = Environment
+                Environment = Environment,
+                ListEnvironmentVariables = ListEnvironmentVariables
             };
         }
 
         public CompileStatus Compile(Sandbox sandbox, string fileName, string workDir)
         {
             if (string.IsNullOrEmpty(CompileProgram))
+            {
                 return new CompileStatus()
                 {
                     Success = true,
                     Message = "",
                     OutputFileName = ExecuteName.Replace("$NAME$", Path.GetFileNameWithoutExtension(fileName))
                 };
-            List<string> env = new List<string>();
-            env.Add(Directory.GetParent(CompileProgram).FullName);
+            }
             var result = sandbox.StartCmd(-1,
                 CompileProgram,
                 CompileArgs.Replace("$NAME$", Path.GetFileNameWithoutExtension(fileName)),
@@ -151,6 +150,20 @@ namespace Judge.Supports
                 WriteIndented = true,
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             });
+        }
+    }
+
+    public class CompilerTemplate : INotifyPropertyChanged
+    {
+        private Compiler compiler = new Compiler();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Compiler Compiler { get { return compiler; } set { compiler = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Compiler")); } }
+
+        public CompilerTemplate()
+        {
+
         }
     }
 

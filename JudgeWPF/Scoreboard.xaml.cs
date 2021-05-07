@@ -70,7 +70,7 @@ namespace JudgeWPF
             if (dep is DataGridColumnHeader)
             {
                 DataGridColumnHeader header = dep as DataGridColumnHeader;
-                if (header.DisplayIndex == scoreDataGrid.Columns.Count - 1) return;
+                if (header.DisplayIndex == scoreDataGrid.Columns.Count - 1 || header.DisplayIndex == 0) return;
                 CurrentHeader = header;
                 ContextMenu cm = FindResource("cmSelectedProblem") as ContextMenu;
                 cm.PlacementTarget = this;

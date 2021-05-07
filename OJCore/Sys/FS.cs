@@ -14,15 +14,19 @@
     internal static class JS
     {
         public const string ApplicationName = "OfflineJudgeUTE";
+
+        private static readonly Random random = new Random(Guid.NewGuid().GetHashCode());
+
         private static string GetStartTimeMD5()
         {
-            byte[] encoded = new UTF8Encoding().GetBytes(Process.GetCurrentProcess().StartTime.Ticks.ToString());
+            byte[] encoded = new UTF8Encoding().GetBytes((Process.GetCurrentProcess().StartTime.Ticks ^ random.Next()).ToString());
             byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encoded);
             return Regex.Replace(BitConverter.ToString(hash)
                 .Replace("-", string.Empty), ".{4}", "$0-")
                 .TrimEnd(new char[] { '-' })
                 .ToLower();
         }
+
         public static readonly string CurrentSession = GetStartTimeMD5();
     }
 
@@ -109,7 +113,7 @@
             Combine(JudgeAppDataDirectory, "compilers.json");
 
         public static readonly string JudgeTempDirectory =
-            CreateDirectory(Combine(JudgeAppDataDirectory, string.Format("{0}-{{{1}}}", JS.ApplicationName, JS.CurrentSession)));
+            CreateDirectory(Combine(JudgeAppDataDirectory, "Temp", string.Format("{0}-{{{1}}}", JS.ApplicationName, JS.CurrentSession)));
 
         public static readonly string JudgeWorkspace =
             CreateDirectory(Combine(JudgeTempDirectory, "Workspace"));
@@ -120,5 +124,20 @@
         public static readonly string RunEXE = Combine(JudgePCMS2, "run.exe");
         public static readonly string InvokeDLL = Combine(JudgePCMS2, "invoke2.dll");
 
+        public static void CleanAppData()
+        {
+            string[] subdir = Directory.GetDirectories(Combine(JudgeAppDataDirectory, "Temp"));
+            for (int i = 0; i < subdir.Length; ++i)
+            {
+                string name = Path.GetFileName(subdir[i]);
+                if (subdir[i] != JudgeTempDirectory)
+                {
+                    if (name.StartsWith("OfflineJudgeUTE-"))
+                    {
+                        DeleteDirectory(subdir[i]);
+                    }
+                }
+            }
+        }
     }
 }

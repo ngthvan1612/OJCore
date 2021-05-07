@@ -34,7 +34,7 @@ namespace Judge.Exceptions
 
     public class JudgeProblemNotFoundExpcetion : Exception
     {
-        public JudgeProblemNotFoundExpcetion(string problemName) : base(string.Format("Problem '{0}' not foudn", problemName))
+        public JudgeProblemNotFoundExpcetion(string problemName) : base(string.Format("Problem '{0}' not found", problemName))
         { }
     }
 }
