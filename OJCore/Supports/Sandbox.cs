@@ -75,7 +75,7 @@ namespace Judge.Supports
         /// <param name="pargs"></param>
         /// <param name="workdir"></param>
         /// <returns></returns>
-        public SandBoxStatus StartCmd(int id, string program, string pargs, string workdir, List<string> enviroments)
+        public SandBoxStatus StartCmd(int id, string program, string pargs, string workdir, Dictionary<string, string> env)
         {
             ProcessStartInfo psi = new ProcessStartInfo()
             {
@@ -88,25 +88,15 @@ namespace Judge.Supports
                 RedirectStandardOutput = true,
                 ErrorDialog = false
             };
-            string env = string.Join(";", enviroments.ToArray());
-            psi.EnvironmentVariables["Path"] = env;
 
-            psi.EnvironmentVariables["VSCommonDir"] = @"C:\PROGRA~2\MICROS~2\Common";
-            psi.EnvironmentVariables["MSDevDir"] = @"C:\PROGRA~2\MICROS~2\Common\msdev98";
-            psi.EnvironmentVariables["MSVCDir"] = @"C:\PROGRA~2\MICROS~2\VC98";
-            psi.EnvironmentVariables["VcOsDir"] = "WINNT";
-            string[] rep = new string[] { "VSCommonDir", "MSDevDir", "MSVCDir", "VcOsDir" };
+            string txt = "";
 
-            psi.EnvironmentVariables["PATH"] = @"%MSDevDir%\BIN;%MSVCDir%\BIN;%VSCommonDir%\TOOLS\%VcOsDir%;%VSCommonDir%\TOOLS;" + psi.EnvironmentVariables["PATH"];
-            psi.EnvironmentVariables["INCLUDE"] = @"%MSVCDir%\ATL\INCLUDE;%MSVCDir%\INCLUDE;%MSVCDir%\MFC\INCLUDE;%INCLUDE%";
-            psi.EnvironmentVariables["LIB"] = @"%MSVCDir%\LIB;%MSVCDir%\MFC\LIB;%LIB%";
-
-            for (int i = 0; i < rep.Length; ++i)
+            foreach (var e in env)
             {
-                psi.EnvironmentVariables["PATH"] = psi.EnvironmentVariables["PATH"].Replace("%" + rep[i] + "%", psi.EnvironmentVariables[rep[i]]);
-                psi.EnvironmentVariables["INCLUDE"] = psi.EnvironmentVariables["INCLUDE"].Replace("%" + rep[i] + "%", psi.EnvironmentVariables[rep[i]]);
-                psi.EnvironmentVariables["LIB"] = psi.EnvironmentVariables["LIB"].Replace("%" + rep[i] + "%", psi.EnvironmentVariables[rep[i]]);
+                psi.EnvironmentVariables[e.Key] = ";" + e.Value;
+                txt += "SET " + e.Key + "=" + e.Value + "\n";
             }
+            File.WriteAllText("out.txt", txt);
 
             using (Process p = new Process())
             {

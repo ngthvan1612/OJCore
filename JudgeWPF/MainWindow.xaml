@@ -105,7 +105,6 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Bảng điểm"
                                            FontSize="16"
-                                           Foreground="White"
                                            FontFamily="Arial"/>
                             </StackPanel>
                         </TabItem.Header>
@@ -141,7 +140,6 @@
                                               OnGradeUser="scoreBoard_OnGradeUser"
                                               OnClickSubmissionDetail="scoreBoard_OnClickSubmissionDetail"
                                               >
-
                             </local:Scoreboard>
                         </Grid>
                     </TabItem>
@@ -160,23 +158,25 @@
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
                             <StackPanel Orientation="Horizontal" Grid.Row="0">
+                                <Button Style="{StaticResource RoundButton}"
+                                        x:Name="btnTestLoad"
+                                        Click="btnTestLoad_Click">
+                                    <Button.Content>Load</Button.Content>
+                                </Button>
                                 <Button
-                                    x:Name="btnTest"
-                                    Click="btnTest_Click"
-                                    Content="Add"
-                                    Style="{StaticResource RoundButton}"
-                                    ></Button>
-                                <Button
-                                    x:Name="btnRandom"
-                                    Click="btnRandom_Click"
-                                    Content="Random"
+                                    x:Name="btnTestExport"
+                                    Click="btnTestExport_Click"
+                                    Content="Export"
                                     Style="{StaticResource RoundButton}"
                                     ></Button>
                             </StackPanel>
                             <Grid Grid.Row="1">
-                                <local:Scoreboard x:Name="scoreTable"
-                                                  >
-                                </local:Scoreboard>
+                                <DataGrid x:Name="datagridTest"
+                                          FontSize="15"
+                                          CanUserResizeColumns="False"
+                                          IsReadOnly="True"
+                                          FontFamily="Arial">
+                                </DataGrid>
                             </Grid>
                         </Grid>
                     </TabItem>

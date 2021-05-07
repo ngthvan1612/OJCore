@@ -173,10 +173,5 @@ namespace JudgeWPF
         {
             DispatcherTimer.IsEnabled = false;
         }
-
-        private void btnDeleteStatus_Click(object sender, RoutedEventArgs e)
-        {
-            //listMessage.Items.Clear();
-        }
     }
 }

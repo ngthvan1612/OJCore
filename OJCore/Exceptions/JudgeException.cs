@@ -4,7 +4,7 @@ namespace Judge.Exceptions
 {
     public class JudgeFileNotFoundException : Exception
     {
-        public JudgeFileNotFoundException(string fileName) : base(string.Format("File not found: '{}'", fileName))
+        public JudgeFileNotFoundException(string fileName) : base(string.Format("File not found: '{0}'", fileName))
         { }
     }
 

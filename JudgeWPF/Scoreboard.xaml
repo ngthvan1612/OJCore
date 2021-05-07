@@ -37,6 +37,8 @@
         <DataGrid x:Name="scoreDataGrid"
                   IsSynchronizedWithCurrentItem="True"
                   ScrollViewer.CanContentScroll="False"
+                  EnableColumnVirtualization="True"
+                  EnableRowVirtualization="True"
                   AutoGenerateColumns="True"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
@@ -50,7 +52,6 @@
                   SelectionUnit="FullRow"
                   FontSize="17"
                   FontFamily="Consolas"
-                  VirtualizingStackPanel.VirtualizationMode="Recycling"
                   HeadersVisibility="Column">
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="CornflowerBlue"/>

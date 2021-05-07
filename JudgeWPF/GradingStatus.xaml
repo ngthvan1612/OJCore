@@ -18,11 +18,6 @@
         SizeToContent="Height"
         Title="Đang chấm" Width="500">
     <Grid Height="Auto">
-        <!--<DockPanel DockPanel.Dock="Top" Grid.Row="0">
-            <ListBox x:Name="listMessage"
-                     FontSize="15">
-            </ListBox>
-        </DockPanel>-->
         <StackPanel Grid.Row="0">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                 <TextBlock x:Name="tbStatus"
@@ -101,11 +96,6 @@
                     Click="btnStopGrading_Click"
                     Content="Dừng chấm"
                     Style="{StaticResource RoundButton}">
-                </Button>
-                <Button Content="Xóa nhật ký"
-                        x:Name="btnDeleteStatus"
-                        Click="btnDeleteStatus_Click"
-                        Style="{StaticResource RoundButton}">
                 </Button>
             </StackPanel>
         </StackPanel>

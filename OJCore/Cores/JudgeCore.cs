@@ -55,7 +55,7 @@ namespace Judge.Cores
         public double Points { get; set; }
     }
 
-    public class Judger
+    public class Judger : IDisposable
     {
         public string CurrentContestDir { get; private set; } = "";
 
@@ -192,7 +192,7 @@ namespace Judge.Cores
             compilerManager.UpdateCompiler(compilers);
         }
 
-        public void LoadContest(string dir)
+        public void LoadContest(string dir, string databaseFile = "contest.ojdb")
         {
             string problemDir = FS.Combine(dir, "Problems");
             if (!FS.DirectoryExist(problemDir))
@@ -202,7 +202,7 @@ namespace Judge.Cores
                 throw new JudgeDirectoryNotFoundException(userDir);
             LoadProblemsDirectory(problemDir);
             LoadUsersDirectory(userDir);
-            string offlineJudgeDBFile = FS.Combine(dir, "contest.ojdb");
+            string offlineJudgeDBFile = FS.Combine(dir, databaseFile);
             if (!FS.FileExist(offlineJudgeDBFile))
             {
                 judgeModel.Save(offlineJudgeDBFile);
@@ -741,7 +741,7 @@ namespace Judge.Cores
         #endregion
         public void Dispose()
         {
-            FS.DeleteDirectory(FS.JudgeTempDirectory);
+            //FS.DeleteDirectory(FS.JudgeTempDirectory);
         }
     }
 }

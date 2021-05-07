@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Dynamic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -52,14 +53,6 @@ namespace JudgeWPF
             InitializeComponent();
             judger = new Judger();
             judger.OnUpdateScore += Judger_OnUpdateScore;
-            scoreTable.PushProblems(new List<string>() { "sumAB", "mulAB", "preSum" });
-            List<string> users = new List<string>();
-            for (int i = 0; i < 35; ++i)
-            {
-                users.Add("20110" + i.ToString().PadLeft(3, '0'));
-            }
-            scoreTable.PushUsers(users);
-            scoreTable.GenRandom();
             judger.ConvertExitCodeNonZeroToRTE = false;
         }
 
@@ -108,11 +101,14 @@ namespace JudgeWPF
             frm.Owner = Window.GetWindow(this);
             if (frm.ShowDialog() == true)
             {
-                using (GradingStatus frmStatus = new GradingStatus(judger, frm.ProblemSelected, frm.UserSelected))
+                while (true)
                 {
-                    frmStatus.Owner = Window.GetWindow(this);
-                    frmStatus.ShowDialog();
-                    judger.SaveContest();
+                    using (GradingStatus frmStatus = new GradingStatus(judger, frm.ProblemSelected, frm.UserSelected))
+                    {
+                        frmStatus.Owner = Window.GetWindow(this);
+                        frmStatus.ShowDialog();
+                        judger.SaveContest(string.Format("{0:hh-mm-ss}.db", DateTime.Now));
+                    }
                 }
             }
         }
@@ -197,18 +193,6 @@ namespace JudgeWPF
             IsContestOpened = false;
         }
 
-        private void btnTest_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private readonly Random random = new Random();
-
-        private void btnRandom_Click(object sender, RoutedEventArgs e)
-        {
-            scoreTable.Change("sumAB", "20110024", random.Next());
-        }
-
         private void scoreBoard_OnGradeSubmission(object sender, ScoreboardClickedEvent e)
         {
             using (GradingStatus frmStatus = new GradingStatus(judger, e.Problem, e.User))
@@ -267,8 +251,6 @@ namespace JudgeWPF
         {
             if (e.Key == Key.Enter)
             {
-                scoreBoard.Focus();
-                //scoreBoard.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                 scoreBoard.BeginEdit();
             }
         }
@@ -286,6 +268,53 @@ namespace JudgeWPF
                 submission_detail.Load(listpath, e.User, e.Problem);
                 submission_detail.ShowDialog();
             }
+        }
+
+        private void btnTestLoad_Click(object sender, RoutedEventArgs e)
+        {
+            VistaOpenFileDialog openDialog = new VistaOpenFileDialog()
+            {
+                Multiselect = true,
+                Filter = "Sqlite 3 file (*.db)|*.db"
+            };
+            if (openDialog.ShowDialog() == true)
+            {
+                string[] listFiles = openDialog.FileNames;
+                string directory = Path.GetDirectoryName(listFiles[0]);
+                DataTable result = new DataTable("Final");
+                bool first = true;
+                for (int i = 0; i < listFiles.Length; ++i)
+                {
+                    using (Judger j = new Judger())
+                    {
+                        j.LoadContest(directory, Path.GetFileName(listFiles[i]));
+                        var scoreTable = j.GetScoreboard().Tables[0];
+                        if (first)
+                        {
+                            result.Columns.Add("Thí sinh");
+                            for (int k= 0; k < scoreTable.Rows.Count; ++k)
+                            {
+                                result.Rows.Add(scoreTable.Rows[k][0]);
+                            }
+                        }
+                        result.Columns.Add(Path.GetFileNameWithoutExtension(listFiles[i]));
+                        for (int k = 0; k < scoreTable.Rows.Count; ++k)
+                        {
+                            result.Rows[k][result.Columns.Count - 1] = scoreTable.Rows[k][scoreTable.Columns.Count - 1];
+                        }
+                    }
+                    first = false;
+                }
+                datagridTest.ItemsSource = null;
+                datagridTest.ItemsSource = result.DefaultView;
+            }
+        }
+
+        private void btnTestExport_Click(object sender, RoutedEventArgs e)
+        {
+            DataSet dt = new DataSet("sdfhks");
+            dt.Tables.Add((datagridTest.ItemsSource as DataView).Table);
+            ExportManager.ExportDataSetToExcel(dt);
         }
     }
 }

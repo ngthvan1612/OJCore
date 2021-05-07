@@ -22,6 +22,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Content="Name" Style="{StaticResource LabelBeforeTextBox}"/>
         <Label Grid.Row="1" Content="Extension" Style="{StaticResource LabelBeforeTextBox}"/>
@@ -30,6 +31,7 @@
         <Label Grid.Row="4" Content="Run program" Style="{StaticResource LabelBeforeTextBox}"/>
         <Label Grid.Row="5" Content="Run args" Style="{StaticResource LabelBeforeTextBox}"/>
         <Label Grid.Row="6" Content="Execute name" Style="{StaticResource LabelBeforeTextBox}"/>
+        <Label Grid.Row="7" Content="Environment" Style="{StaticResource LabelBeforeTextBox}"/>
 
         <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="0" Grid.Column="1"
                  Text="{Binding Name, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
@@ -46,5 +48,7 @@
                  Text="{Binding RunArgs, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
         <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="6" Grid.Column="1"
                  Text="{Binding ExecuteName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Style="{StaticResource InputBoxStyle}" Grid.Row="7" Grid.Column="1"
+                 Text="{Binding Environment, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>

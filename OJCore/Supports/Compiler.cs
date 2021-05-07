@@ -7,7 +7,10 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Judge.Exceptions;
+using System.Diagnostics;
 using System.Windows.Forms;
+using System.Text;
 
 namespace Judge.Supports
 {
@@ -41,7 +44,66 @@ namespace Judge.Supports
         [JsonPropertyName("ExecuteName")]
         public string ExecuteName { get { return exeName; } set { exeName = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ExecuteName")); } }
 
+        private string environment = "";
+        [JsonPropertyName("Environment")]
+        public string Environment { get { return environment; } set { environment = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Environment")); } }
+
+        [JsonIgnore]
+        public Dictionary<string, string> ListEnvironmentVariables { get; set; } = new Dictionary<string, string>();
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public void LoadEnvironment()
+        {
+            //ListEnvironmentVariables.Clear();
+            if (!string.IsNullOrEmpty(CompileProgram))
+            {
+                if (!FS.FileExist(CompileProgram))
+                    throw new JudgeFileNotFoundException(CompileProgram);
+                ListEnvironmentVariables["path"] = ";" + Path.GetDirectoryName(CompileProgram) + ";";
+            }
+            if (string.IsNullOrEmpty(Environment))
+                return;
+            if (!FS.FileExist(Environment))
+                throw new JudgeFileNotFoundException(Environment);
+            List<string> env = new List<string>();
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.EnvironmentVariables.Clear();
+            psi.EnvironmentVariables["OS"] = "Windows_NT";
+            psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
+            psi.RedirectStandardOutput = true;
+            psi.FileName = @"c:\Windows\System32\cmd.exe";
+            psi.Arguments = string.Format("/c \"{0}\"&SET", Environment);
+            Process process = new Process()
+            {
+                StartInfo = psi
+            };
+            process.Start();
+            process.OutputDataReceived += (sender, e) => { if (!string.IsNullOrEmpty(e.Data)) env.Add(e.Data); };
+            process.BeginOutputReadLine();
+            process.WaitForExit(2500);
+            for (int i = 0; i < env.Count; ++i)
+            {
+                int sp = -1;
+                for (int j = 0; j < env[i].Length; ++j)
+                {
+                    if (env[i][j] == ' ') break;
+                    else if (env[i][j] == '=')
+                    {
+                        sp = j;
+                        break;
+                    }
+                }
+                if (sp <= 0 || sp == env[i].Length - 1) continue;
+                string name = env[i].Substring(0, sp);
+                string val = env[i].Substring(sp + 1);
+                if (ListEnvironmentVariables.ContainsKey(name.ToLower()))
+                    ListEnvironmentVariables[name.ToLower()] += val;
+                else
+                    ListEnvironmentVariables[name.ToLower()] = val;
+            }
+        }
 
         public object Clone()
         {
@@ -53,7 +115,8 @@ namespace Judge.Supports
                 Extension = Extension,
                 Name = name,
                 RunArgs = RunArgs,
-                RunProgram = RunProgram
+                RunProgram = RunProgram,
+                Environment = Environment
             };
         }
 
@@ -72,7 +135,7 @@ namespace Judge.Supports
                 CompileProgram,
                 CompileArgs.Replace("$NAME$", Path.GetFileNameWithoutExtension(fileName)),
                 workDir,
-                env);
+                ListEnvironmentVariables);
             return new CompileStatus()
             {
                 Success = (result.ExitCode == 0),
@@ -141,6 +204,7 @@ namespace Judge.Supports
             compilersMap.Clear();
             for (int i = 0; i < compilers.Count; ++i)
             {
+                compilers[i].LoadEnvironment();
                 compilersMap.Add(compilers[i].Name.ToLower(), compilers[i]);
             }
             SaveCompilerConfig();
@@ -164,6 +228,7 @@ namespace Judge.Supports
                     {
                         compilers[i].Extension = compilers[i].Extension.ToLower();
                         compilersMap[compilers[i].Name.ToLower()] = compilers[i];
+                        compilers[i].LoadEnvironment();
                     }
                 }
             }
