@@ -200,6 +200,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\compilerTemplates.json" />
     <None Include="Resources\WinMainIcon.ico" />
   </ItemGroup>
   <ItemGroup>

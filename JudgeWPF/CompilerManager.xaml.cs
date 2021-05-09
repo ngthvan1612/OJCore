@@ -14,18 +14,22 @@ namespace JudgeWPF
     {
         public List<Compiler> Compilers { get; set; }
 
+        private readonly SortedSet<string> listCompilerName = new SortedSet<string>();
+
         private TabItem CreateNewTab(Compiler com)
         {
             TabItem tab = new TabItem()
             {
                 Content = new CompilerDetail(com)
             };
-            Binding binding = new Binding();
-            binding.RelativeSource = new RelativeSource(RelativeSourceMode.Self);
-            binding.Path = new PropertyPath("Content.Data.Name");
-            binding.Mode = BindingMode.TwoWay;
-            binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            tab.SetBinding(TabItem.HeaderProperty, binding);
+            Binding binding = new Binding
+            {
+                RelativeSource = new RelativeSource(RelativeSourceMode.Self),
+                Path = new PropertyPath("Content.Data.Name"),
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            tab.SetBinding(HeaderedContentControl.HeaderProperty, binding);
             return tab;
         }
 
@@ -39,6 +43,7 @@ namespace JudgeWPF
                 Compiler clone = com.Clone() as Compiler;
                 Compilers.Add(clone);
                 tcCompilers.Items.Add(CreateNewTab(clone));
+                listCompilerName.Add(com.Name);
             }
         }
 
@@ -83,20 +88,39 @@ namespace JudgeWPF
             SelectCompilerTemplate template = new SelectCompilerTemplate();
             if (template.ShowDialog() == true)
             {
+                Compiler com = template.Compiler;
+                int index = 0;
+                for (int i = 0; i < Compilers.Count; ++i)
+                {
+                    if (Compilers[i].Name == com.Name)
+                    {
+                        index = 1;
+                        //find MEX
+                        while (true)
+                        {
+                            if (!listCompilerName.Contains(Compilers[i].Name + "(" + index.ToString() + ")"))
+                                break;
+                            index++;
+                        }
 
+                    }
+                }
+                if (index != 0)
+                    com.Name = com.Name + "(" + index.ToString() + ")";
+                listCompilerName.Add(com.Name);
+                Compilers.Add(com);
+                tcCompilers.Items.Add(CreateNewTab(com));
+                tcCompilers.SelectedIndex = tcCompilers.Items.Count - 1;
             }
-            //Compiler com = new Compiler();
-            //Compilers.Add(com);
-            //tcCompilers.Items.Add(CreateNewTab(com));
-            //tcCompilers.SelectedIndex = tcCompilers.Items.Count - 1;
         }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            int sel = tcCompilers.SelectedIndex;
-            if (sel > -1)
+            if (tcCompilers.SelectedItem != null)
             {
-                Compilers.RemoveAt(sel);
+                Compiler tmp = ((tcCompilers.SelectedItem as TabItem).Content as CompilerDetail).Data;
+                listCompilerName.Remove(tmp.Name);
+                Compilers.Remove(tmp);
                 tcCompilers.Items.Remove(tcCompilers.SelectedItem);
             }
         }

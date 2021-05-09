@@ -43,6 +43,7 @@ namespace Judge.Cores
         OK,
         CompileError,
         SubmissionNotFound,
+        CompilerNotFound,
         ExecuteNotFound,
         RemoveSubmission
     }
@@ -110,6 +111,7 @@ namespace Judge.Cores
             workSpace = FS.JudgeWorkspace;
             FS.WriteAllBytes(FS.RunEXE, Properties.Resources.run_PCMS2);
             FS.WriteAllBytes(FS.InvokeDLL, Properties.Resources.invoke2_PCMS2);
+            FS.WriteAllBytes(FS.CompilerTemplates, Properties.Resources.compilerTemplates);
             FS.CleanAppData();
         }
 
@@ -353,13 +355,13 @@ namespace Judge.Cores
                 //Submission not found
                 OnGradeStatusChanged?.Invoke(this, new JudgeGradingEvent()
                 {
-                    Event = JudgeGradingEventType.SubmissionNotFound,
+                    Event = JudgeGradingEventType.CompilerNotFound,
                     UserName = userName,
                     ProblemName = problemName
                 });
                 TestcasesGraded += total;
                 judgeModel.CreateNewSubmission(problemName, userName, "Not found submission!", "MS", "(null)");
-                status = JudgeUpdateScoreType.SubmissionNotFound;
+                status = JudgeUpdateScoreType.CompilerNotFound;
                 return 0;
             }
 

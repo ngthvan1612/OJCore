@@ -31,6 +31,10 @@
 
             <ComboBox Grid.Row="0"
                       Grid.Column="1"
+                      x:Name="cbSelectTemplate"
+                      IsReadOnly="True"
+                      DisplayMemberPath="Name"
+                      SelectedIndex="0"
                       Style="{StaticResource comboBoxSelectionGradingMode}"
                       />
             
@@ -41,8 +45,10 @@
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBox Style="{StaticResource InputBoxStyle}" Grid.Column="0"
-                     Text="{Binding Extension, Mode=TwoWay}"
-                     x:Name="tbExtension"/>
+                         Text="{Binding Extension, Mode=TwoWay}"
+                         FontWeight="Normal"
+                         FontSize="18"
+                         x:Name="tbLocation"/>
                 <Button Grid.Column="1" Background="Transparent" BorderBrush="Transparent"
                         x:Name="btnOpenFolder"
                         Click="btnOpenFolder_Click">
@@ -52,11 +58,12 @@
         </Grid>
         <Grid Grid.Row="1">
             <Label Grid.Row="0"
-                   Content="Template"
+                   Content="{Binding ElementName=cbSelectTemplate, Path=SelectedItem.Tag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                    Style="{StaticResource LabelBeforeTextBox}"
                    FontWeight="Normal"
                    Foreground="Blue"
                    Margin="0"
+                   x:Name="labelTag"
                    HorizontalContentAlignment="Center"
                    VerticalContentAlignment="Center"/>
         </Grid>

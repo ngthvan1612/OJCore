@@ -20,8 +20,21 @@ namespace JudgeWPF
         public SelectionGradingMode(Judger judger)
         {
             InitializeComponent();
+
             this.problems = judger.GetListProblemName();
             users = judger.GetListUserName();
+
+            cbProblemGradingProblem.ItemsSource = problems;
+            cbProblemGradingProblem.SelectedIndex = 0;
+
+            cbUserGradingUser.ItemsSource = users;
+            cbUserGradingUser.SelectedIndex = 0;
+
+            cbProblemGradingSubmission.ItemsSource = problems;
+            cbProblemGradingSubmission.SelectedIndex = 0;
+
+            cbUserGradingSubmission.ItemsSource = users;
+            cbUserGradingSubmission.SelectedIndex = 0;
         }
 
         private void btnStartGrading_Click(object sender, RoutedEventArgs e)
@@ -95,17 +108,7 @@ namespace JudgeWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbProblemGradingProblem.ItemsSource = problems;
-            cbProblemGradingProblem.SelectedIndex = 0;
 
-            cbUserGradingUser.ItemsSource = users;
-            cbUserGradingUser.SelectedIndex = 0;
-
-            cbProblemGradingSubmission.ItemsSource = problems;
-            cbProblemGradingSubmission.SelectedIndex = 0;
-
-            cbUserGradingSubmission.ItemsSource = users;
-            cbUserGradingSubmission.SelectedIndex = 0;
         }
     }
 

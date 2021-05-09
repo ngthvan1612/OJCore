@@ -58,6 +58,9 @@ namespace JudgeWPF
             judger = new Judger();
             judger.OnUpdateScore += Judger_OnUpdateScore;
             judger.ConvertExitCodeNonZeroToRTE = false;
+            CompilerTemplateManager ctm = new CompilerTemplateManager();
+            ctm.Load();
+            ctm.SaveTest();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -91,6 +94,11 @@ namespace JudgeWPF
                     case JudgeUpdateScoreType.SubmissionNotFound:
                         scoreBoard.Change(args.ProblemName, args.UserName, "Không có bài");
                         break;
+                    case JudgeUpdateScoreType.CompilerNotFound:
+                        scoreBoard.Change(args.ProblemName, args.UserName, "Không dịch được");
+                        break;
+                    default:
+                        throw new Exception("Programming error");
                 }
             }));
         }
@@ -105,14 +113,11 @@ namespace JudgeWPF
             frm.Owner = Window.GetWindow(this);
             if (frm.ShowDialog() == true)
             {
-                while (true)
+                using (GradingStatus frmStatus = new GradingStatus(judger, frm.ProblemSelected, frm.UserSelected))
                 {
-                    using (GradingStatus frmStatus = new GradingStatus(judger, frm.ProblemSelected, frm.UserSelected))
-                    {
-                        frmStatus.Owner = Window.GetWindow(this);
-                        frmStatus.ShowDialog();
-                        judger.SaveContest(string.Format("{0:hh-mm-ss}.db", DateTime.Now));
-                    }
+                    frmStatus.Owner = Window.GetWindow(this);
+                    frmStatus.ShowDialog();
+                    judger.SaveContest();
                 }
             }
         }

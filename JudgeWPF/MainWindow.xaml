@@ -121,7 +121,7 @@
                                     x:Name="tbGotoUser"
                                     HorizontalAlignment="Left"
                                     FontSize="18"
-                                    MinWidth="120"
+                                    MinWidth="150"
                                     Width="Auto"
                                     PreviewKeyDown="tbGotoUser_PreviewKeyDown"
                                     TextChanged="tbGotoUser_TextChanged"

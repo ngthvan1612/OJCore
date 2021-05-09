@@ -1,0 +1,57 @@
+[
+  {
+    "Name": "TDM GCC C++",
+    "Extension": ".cpp",
+    "CompileProgram": "$CPATH$\\g++.exe",
+    "CompileArgs": "-std=c++11 -O2 -Wall $NAME$.cpp -o $NAME$.exe",
+    "RunProgram": "$NAME$.exe",
+    "RunArgs": "",
+    "ExecuteName": "$NAME$.exe",
+    "Environment": "",
+    "Tag": "Chọn thư mục chứ file g++.exe"
+  },
+  {
+    "Name": "3.VISUAL 6.0 C++",
+    "Extension": ".cpp",
+    "CompileProgram": "$CPATH$\\Bin\\CL.EXE",
+    "CompileArgs": "/nologo $NAME$.cpp",
+    "RunProgram": "$NAME$.exe",
+    "RunArgs": "",
+    "ExecuteName": "$NAME$.exe",
+    "Environment": "$CPATH$\\Bin\\VCVARS32.BAT",
+    "Tag": "Chọn thư mục VC98"
+  },
+    {
+    "Name": "Exe file",
+    "Extension": ".exe",
+    "CompileProgram": "",
+    "CompileArgs": "",
+    "RunProgram": "$NAME$.exe",
+    "RunArgs": "",
+    "ExecuteName": "$NAME$.exe",
+    "Environment": "",
+    "Tag": ""
+  },
+  {
+    "Name": "Java",
+    "Extension": ".java",
+    "CompileProgram": "$CPATH$/javac.exe",
+    "CompileArgs": "$NAME$.java",
+    "RunProgram": "$CPATH$/java.exe",
+    "RunArgs": "-Xmx512M -Xss64M -Duser.language=en -Duser.region=US -Duser.variant=US $NAME$",
+    "ExecuteName": "$NAME$.class",
+    "Environment": "",
+    "Tag": "Chọn thư mục bin của java"
+  },
+  {
+    "Name": "Python",
+    "Extension": ".py",
+    "CompileProgram": "",
+    "CompileArgs": "",
+    "RunProgram": "$CPATH$/python.exe",
+    "RunArgs": "$NAME$.py",
+    "ExecuteName": "$NAME$.py",
+    "Environment": "",
+    "Tag": "Chọn thư mục chứa file python.exe"
+  }
+]

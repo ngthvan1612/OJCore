@@ -4,17 +4,21 @@ using Judge.Exceptions;
 using Judge.Supports;
 using System.IO;
 using Judge.Types;
+using System.Windows.Forms;
+using System;
 
 namespace Judge.Models
 {
     public class UserModel
     {
-        private SortedList<string, User> usersMap;
+        private readonly SortedList<string, User> usersMap;
+        private List<string> listUserName;
         public string UserDirectory { get; set; } = "";
 
         public UserModel()
         {
             usersMap = new SortedList<string, User>();
+            listUserName = new List<string>();
             Log.print(LogType.Info, "Init user model ok");
         }
 
@@ -33,7 +37,7 @@ namespace Judge.Models
 
         public List<string> GetListUsernames()
         {
-            return usersMap.Values.Cast<User>().Select(user => user.UserName).ToList();
+            return listUserName;
         }
 
         public void LoadUsersDirectory(string dir)
@@ -60,7 +64,27 @@ namespace Judge.Models
                 }
                 Log.print(LogType.Info, "Insert user '{0}'", userName);
                 usersMap[userName.ToLower()] = user;
+                listUserName.Add(userName);
             }
+            listUserName.Sort(new UserNameCompare());
+        }
+    }
+
+    public class UserNameCompare : IComparer<string>
+    {
+        public int Compare(string x, string y)
+        {
+            int z = Math.Min(x.Length, y.Length);
+            for (int i = 0; i < z; ++i)
+            {
+                if (x[i] < y[i]) return -1;
+                else if (x[i] > y[i]) return +1;
+            }
+            if (x.Length < y.Length)
+                return -1;
+            else if (x.Length > y.Length)
+                return +1;
+            return 0;
         }
     }
 }

@@ -63,6 +63,16 @@ namespace Judge.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] compilerTemplates {
+            get {
+                object obj = ResourceManager.GetObject("compilerTemplates", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] invoke2_PCMS2 {
             get {
                 object obj = ResourceManager.GetObject("invoke2_PCMS2", resourceCulture);

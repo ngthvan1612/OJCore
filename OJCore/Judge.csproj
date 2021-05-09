@@ -146,6 +146,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\compilerTemplates.json" />
     <None Include="Resources\run.exe" />
   </ItemGroup>
   <ItemGroup>

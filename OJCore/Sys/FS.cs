@@ -78,6 +78,11 @@
             File.WriteAllBytes(path, data);
         }
 
+        public static void WriteAllText(string path, string contents)
+        {
+            File.WriteAllText(path, contents);
+        }
+
         public static string Combine(params string[] path)
         {
             StringBuilder sb = new StringBuilder();
@@ -112,6 +117,9 @@
         public static readonly string JudgeCompilerConfig =
             Combine(JudgeAppDataDirectory, "compilers.json");
 
+        public static readonly string JudgeCompilerTemplates =
+            Combine(JudgeAppDataDirectory, "compilerTemplates.json");
+
         public static readonly string JudgeTempDirectory =
             CreateDirectory(Combine(JudgeAppDataDirectory, "Temp", string.Format("{0}-{{{1}}}", JS.ApplicationName, JS.CurrentSession)));
 
@@ -123,6 +131,7 @@
 
         public static readonly string RunEXE = Combine(JudgePCMS2, "run.exe");
         public static readonly string InvokeDLL = Combine(JudgePCMS2, "invoke2.dll");
+        public static readonly string CompilerTemplates = Combine(JudgeAppDataDirectory, "compilerTemplates.json");
 
         public static void CleanAppData()
         {

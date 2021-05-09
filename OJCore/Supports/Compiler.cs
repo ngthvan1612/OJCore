@@ -48,6 +48,9 @@ namespace Judge.Supports
         [JsonPropertyName("Environment")]
         public string Environment { get { return environment; } set { environment = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Environment")); } }
 
+        [JsonPropertyName("Tag")]
+        public string Tag { get; set; } = "";
+
         [JsonIgnore]
         public Dictionary<string, string> ListEnvironmentVariables { get; set; } = new Dictionary<string, string>();
 
@@ -153,17 +156,47 @@ namespace Judge.Supports
         }
     }
 
-    public class CompilerTemplate : INotifyPropertyChanged
+    public class CompilerTemplateManager : ICloneable
     {
-        private Compiler compiler = new Compiler();
+        [JsonPropertyName("Templates")]
+        public List<Compiler> Templates { get; set; } = new List<Compiler>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Compiler Compiler { get { return compiler; } set { compiler = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Compiler")); } }
-
-        public CompilerTemplate()
+        public CompilerTemplateManager()
         {
 
+        }
+
+        public void Load()
+        {
+            using (TextReader textReader = new StreamReader(FS.JudgeCompilerTemplates))
+            {
+                Templates = JsonSerializer.Deserialize<List<Compiler>>(textReader.ReadToEnd());
+                textReader.Close();
+            }
+        }
+
+        public void SaveTest()
+        {
+            File.WriteAllText("out.json", this.ToString());
+        }
+
+        public object Clone()
+        {
+            List<Compiler> result = new List<Compiler>();
+            for (int i = 0; i < Templates.Count; ++i)
+            {
+                result.Add(Templates[i].Clone() as Compiler);
+            }
+            return result;
+        }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(Templates, new JsonSerializerOptions()
+            {
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            });
         }
     }
 
@@ -176,12 +209,12 @@ namespace Judge.Supports
 
     public class CompilerManager
     {
-        private SortedList<string, Compiler> compilersMap;
+        private readonly SortedList<string, Compiler> compilersMap;
 
         public CompilerManager()
         {
             compilersMap = new SortedList<string, Compiler>();
-            LoadCompilerConfig();
+            Load();
         }
 
         public bool Contains(string extension)
@@ -220,7 +253,7 @@ namespace Judge.Supports
                 compilers[i].LoadEnvironment();
                 compilersMap.Add(compilers[i].Name.ToLower(), compilers[i]);
             }
-            SaveCompilerConfig();
+            Save();
         }
 
         public List<Compiler> GetCompilers()
@@ -228,7 +261,7 @@ namespace Judge.Supports
             return compilersMap.Values.ToList();
         }
 
-        private void LoadCompilerConfig()
+        private void Load()
         {
             if (FS.FileExist(FS.JudgeCompilerConfig))
             {
@@ -248,12 +281,12 @@ namespace Judge.Supports
             else
             {
                 compilersMap.Clear();
-                SaveCompilerConfig();
+                Save();
             }
             Log.print(LogType.Info, "Loaded compiler config");
         }
 
-        public void SaveCompilerConfig()
+        public void Save()
         {
             using (TextWriter textWriter = new StreamWriter(FS.JudgeCompilerConfig))
             {
