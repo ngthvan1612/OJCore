@@ -77,7 +77,7 @@ namespace Judge.Cores
         public int Totaltestcases { get; private set; } = 0;
         public int TestcasesGraded { get; private set; } = 0;
 
-        public bool ConvertExitCodeNonZeroToRTE { get; set; } = false;
+        public bool TreatExitCodeNonZeroAsRTE { get; set; } = false;
 
         private object _IsGrading = false;
         public bool IsGrading
@@ -444,7 +444,7 @@ namespace Judge.Cores
                     problem.Memorylimit * 1024,
                     problem.UseStdin ? sourceInput : inputRun,
                     problem.UseStdout ? destOutput : null,
-                    ConvertExitCodeNonZeroToRTE
+                    TreatExitCodeNonZeroAsRTE
                 );
 
                 if (!IsGrading) //cancel

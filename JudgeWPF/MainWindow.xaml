@@ -80,6 +80,8 @@
                     </MenuItem>
 
                     <MenuItem Header="Hệ thống chấm bài"
+                              x:Name="menuJudgeSetting"
+                              Click="menuJudgeSetting_Click"
                               Style="{StaticResource mainMenuSub}">
                     </MenuItem>
                 </MenuItem>
@@ -161,6 +163,18 @@
                                     Click="btnTest_Click"
                                     Style="{StaticResource RoundButton}"
                                     >Test MD5 Hash [Time + Random + Guid]</Button>
+                                <Button
+                                    x:Name="btnTestSetting"
+                                    Click="btnTestSetting_Click"
+                                    Content="Test Save Setting"
+                                    Style="{StaticResource RoundButton}"
+                                    ></Button>
+                                <Button
+                                    x:Name="btnTestLoadSetting"
+                                    Click="btnTestLoadSetting_Click"
+                                    Content="Test Load Setting"
+                                    Style="{StaticResource RoundButton}"
+                                    ></Button>
                             </StackPanel>
                             <Grid Grid.Row="1">
                                 <DataGrid x:Name="datagridTest"

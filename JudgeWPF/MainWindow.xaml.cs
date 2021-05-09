@@ -39,6 +39,8 @@ namespace JudgeWPF
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private Settings setting = new Settings();
+
         public bool IsContestOpened
         {
             get { return isContestOpened; }
@@ -55,9 +57,11 @@ namespace JudgeWPF
             GradeCommand.InputGestures.Add(new KeyGesture(Key.F9));
             GotoUserCommand.InputGestures.Add(new KeyGesture(Key.F, ModifierKeys.Control));
             InitializeComponent();
+            setting = new Settings();
+            setting.Load();
             judger = new Judger();
             judger.OnUpdateScore += Judger_OnUpdateScore;
-            judger.ConvertExitCodeNonZeroToRTE = false;
+            judger.TreatExitCodeNonZeroAsRTE = setting.TreatExitCodeNonZeroAsRTE;
             CompilerTemplateManager ctm = new CompilerTemplateManager();
             ctm.Load();
             ctm.SaveTest();
@@ -346,6 +350,30 @@ namespace JudgeWPF
                 sb.Append(GetStartTimeMD5() + "\n");
             }
             MessageBox.Show(sb.ToString());
+        }
+
+        private void btnTestSetting_Click(object sender, RoutedEventArgs e)
+        {
+            Settings settings = new Settings();
+            settings.Save();
+            MessageBox.Show(settings.ToString());
+        }
+
+        private void btnTestLoadSetting_Click(object sender, RoutedEventArgs e)
+        {
+            Settings settings = new Settings();
+            settings.Load();
+            MessageBox.Show(settings.ToString());
+        }
+
+        private void menuJudgeSetting_Click(object sender, RoutedEventArgs e)
+        {
+            var tmp = new JudgeSetting(setting);
+            if (tmp.ShowDialog() == true)
+            {
+                setting = tmp.JSettings.Clone();
+                judger.TreatExitCodeNonZeroAsRTE = setting.TreatExitCodeNonZeroAsRTE;
+            }
         }
     }
 }

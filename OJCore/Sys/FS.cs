@@ -5,13 +5,15 @@
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
+    using System.Text.Encodings.Web;
+    using System.Text.Json;
     using System.Text.RegularExpressions;
     using System.Threading;
 
     /// <summary>
     /// Judge const data
     /// </summary>
-    internal static class JS
+    public static class JS
     {
         public const string ApplicationName = "OfflineJudgeUTE";
 
@@ -33,7 +35,7 @@
     /// <summary>
     /// Judge File System
     /// </summary>
-    internal static class FS
+    public static class FS
     {
         public static string CreateDirectory(string path)
         {
@@ -119,6 +121,9 @@
 
         public static readonly string JudgeCompilerTemplates =
             Combine(JudgeAppDataDirectory, "compilerTemplates.json");
+
+        public static readonly string JudgeSettings =
+            Combine(JudgeAppDataDirectory, "settings.json");
 
         public static readonly string JudgeTempDirectory =
             CreateDirectory(Combine(JudgeAppDataDirectory, "Temp", string.Format("{0}-{{{1}}}", JS.ApplicationName, JS.CurrentSession)));
