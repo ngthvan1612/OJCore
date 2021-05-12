@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         ShowInTaskbar="False"
-        Icon="Resources/check-7062.png"
+        Icon="Resources/Icon.png"
         Loaded="Window_Loaded"
         Title="Thiết lập" Height="550" Width="800">
     <Window.Resources>

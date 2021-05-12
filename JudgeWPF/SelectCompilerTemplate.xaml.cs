@@ -40,6 +40,7 @@ namespace JudgeWPF
                 compiler.Tag = "";
                 compiler.CompileProgram = compiler.CompileProgram.Replace("$CPATH$", tbLocation.Text);
                 compiler.RunProgram = compiler.RunProgram.Replace("$CPATH$", tbLocation.Text);
+                compiler.Environment = compiler.Environment.Replace("$CPATH$", tbLocation.Text);
                 if (!string.IsNullOrEmpty(compiler.CompileProgram))
                 {
                     if (!File.Exists(compiler.CompileProgram))

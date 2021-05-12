@@ -14,7 +14,7 @@
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         Closing="winMain_Closing"
-        Unloaded="Window_Unloaded" Icon="Resources/check-7062.png">
+        Unloaded="Window_Unloaded" Icon="Resources/Icon.png">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:MainWindow.OpenContestCommand}"
                         x:Name="OpenContestCommandBinding"
@@ -85,7 +85,7 @@
                               Style="{StaticResource mainMenuSub}">
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="Hỗ trợ"  Style="{StaticResource mainMenuTop}">
+                <!--<MenuItem Header="Hỗ trợ"  Style="{StaticResource mainMenuTop}">
                     <MenuItem Header="Hướng dẫn sử dụng"
                               Style="{StaticResource mainMenuSub}">
 
@@ -93,7 +93,7 @@
                     <MenuItem Header="Thông tin"
                               Style="{StaticResource mainMenuSub}">
                     </MenuItem>
-                </MenuItem>
+                </MenuItem>-->
             </Menu>
             <DockPanel>
                 <TabControl DockPanel.Dock="Top">
@@ -140,7 +140,7 @@
                             </local:Scoreboard>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="tbTest" Header="Test">
+                    <!--<TabItem x:Name="tbTest" Header="Test">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
@@ -185,7 +185,7 @@
                                 </DataGrid>
                             </Grid>
                         </Grid>
-                    </TabItem>
+                    </TabItem>-->
                 </TabControl>
             </DockPanel>
         </DockPanel>

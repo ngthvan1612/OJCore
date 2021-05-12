@@ -36,7 +36,6 @@
     <Grid>
         <DataGrid x:Name="scoreDataGrid"
                   IsSynchronizedWithCurrentItem="True"
-                  ScrollViewer.CanContentScroll="False"
                   EnableColumnVirtualization="True"
                   EnableRowVirtualization="True"
                   AutoGenerateColumns="True"

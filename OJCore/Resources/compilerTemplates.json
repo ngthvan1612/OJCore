@@ -35,9 +35,9 @@
   {
     "Name": "Java",
     "Extension": ".java",
-    "CompileProgram": "$CPATH$/javac.exe",
+    "CompileProgram": "$CPATH$\\javac.exe",
     "CompileArgs": "$NAME$.java",
-    "RunProgram": "$CPATH$/java.exe",
+    "RunProgram": "$CPATH$\\java.exe",
     "RunArgs": "-Xmx512M -Xss64M -Duser.language=en -Duser.region=US -Duser.variant=US $NAME$",
     "ExecuteName": "$NAME$.class",
     "Environment": "",

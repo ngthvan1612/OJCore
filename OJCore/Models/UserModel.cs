@@ -24,6 +24,7 @@ namespace Judge.Models
 
         public void Close()
         {
+            listUserName.Clear();
             usersMap.Clear();
             UserDirectory = "";
         }

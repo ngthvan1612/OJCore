@@ -136,6 +136,7 @@ namespace JudgeWPF
             {
                 try
                 {
+                    judger.CloseContest();
                     judger.LoadContest(openFolder.SelectedPath);
                     List<string> problems = judger.GetListProblemName();
                     List<string> users = judger.GetListUserName();
@@ -154,11 +155,14 @@ namespace JudgeWPF
 
         private void menuExportExcel_Click(object sender, RoutedEventArgs e)
         {
-            if (!judger.IsOpen)
+            if (Type.GetTypeFromProgID("Excel.Application") != null)
             {
-                throw new Exception();
+                judger.ExportExcel();
             }
-            judger.ExportExcel();
+            else
+            {
+                MessageBox.Show("MS Excel chưa được cài đặt", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void menuProblemSettings_Click(object sender, RoutedEventArgs e)
@@ -283,52 +287,52 @@ namespace JudgeWPF
             }
         }
 
-        private void btnTestLoad_Click(object sender, RoutedEventArgs e)
-        {
-            VistaOpenFileDialog openDialog = new VistaOpenFileDialog()
-            {
-                Multiselect = true,
-                Filter = "Sqlite 3 file (*.db)|*.db"
-            };
-            if (openDialog.ShowDialog() == true)
-            {
-                string[] listFiles = openDialog.FileNames;
-                string directory = Path.GetDirectoryName(listFiles[0]);
-                DataTable result = new DataTable("Final");
-                bool first = true;
-                for (int i = 0; i < listFiles.Length; ++i)
-                {
-                    using (Judger j = new Judger())
-                    {
-                        j.LoadContest(directory, Path.GetFileName(listFiles[i]));
-                        var scoreTable = j.GetScoreboard().Tables[0];
-                        if (first)
-                        {
-                            result.Columns.Add("Thí sinh");
-                            for (int k= 0; k < scoreTable.Rows.Count; ++k)
-                            {
-                                result.Rows.Add(scoreTable.Rows[k][0]);
-                            }
-                        }
-                        result.Columns.Add(Path.GetFileNameWithoutExtension(listFiles[i]));
-                        for (int k = 0; k < scoreTable.Rows.Count; ++k)
-                        {
-                            result.Rows[k][result.Columns.Count - 1] = scoreTable.Rows[k][scoreTable.Columns.Count - 1];
-                        }
-                    }
-                    first = false;
-                }
-                datagridTest.ItemsSource = null;
-                datagridTest.ItemsSource = result.DefaultView;
-            }
-        }
+        //private void btnTestLoad_Click(object sender, RoutedEventArgs e)
+        //{
+        //    VistaOpenFileDialog openDialog = new VistaOpenFileDialog()
+        //    {
+        //        Multiselect = true,
+        //        Filter = "Sqlite 3 file (*.db)|*.db"
+        //    };
+        //    if (openDialog.ShowDialog() == true)
+        //    {
+        //        string[] listFiles = openDialog.FileNames;
+        //        string directory = Path.GetDirectoryName(listFiles[0]);
+        //        DataTable result = new DataTable("Final");
+        //        bool first = true;
+        //        for (int i = 0; i < listFiles.Length; ++i)
+        //        {
+        //            using (Judger j = new Judger())
+        //            {
+        //                j.LoadContest(directory, Path.GetFileName(listFiles[i]));
+        //                var scoreTable = j.GetScoreboard().Tables[0];
+        //                if (first)
+        //                {
+        //                    result.Columns.Add("Thí sinh");
+        //                    for (int k= 0; k < scoreTable.Rows.Count; ++k)
+        //                    {
+        //                        result.Rows.Add(scoreTable.Rows[k][0]);
+        //                    }
+        //                }
+        //                result.Columns.Add(Path.GetFileNameWithoutExtension(listFiles[i]));
+        //                for (int k = 0; k < scoreTable.Rows.Count; ++k)
+        //                {
+        //                    result.Rows[k][result.Columns.Count - 1] = scoreTable.Rows[k][scoreTable.Columns.Count - 1];
+        //                }
+        //            }
+        //            first = false;
+        //        }
+        //        datagridTest.ItemsSource = null;
+        //        datagridTest.ItemsSource = result.DefaultView;
+        //    }
+        //}
 
-        private void btnTestExport_Click(object sender, RoutedEventArgs e)
-        {
-            DataSet dt = new DataSet("sdfhks");
-            dt.Tables.Add((datagridTest.ItemsSource as DataView).Table);
-            ExportManager.ExportDataSetToExcel(dt);
-        }
+        //private void btnTestExport_Click(object sender, RoutedEventArgs e)
+        //{
+        //    DataSet dt = new DataSet("sdfhks");
+        //    dt.Tables.Add((datagridTest.ItemsSource as DataView).Table);
+        //    ExportManager.ExportDataSetToExcel(dt);
+        //}
 
         private static readonly Random random = new Random(Guid.NewGuid().GetHashCode());
 

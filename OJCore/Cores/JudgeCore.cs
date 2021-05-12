@@ -7,6 +7,8 @@ using Judge.Sys;
 using System.Data;
 using System.Threading;
 using Judge.Types;
+using System.Text;
+using System.Windows.Forms;
 
 namespace Judge.Cores
 {
@@ -143,7 +145,7 @@ namespace Judge.Cores
             judgeModel.RemoveAllUsers();
             userModel.LoadUsersDirectory(dir);
             List<string> users = userModel.GetListUsernames();
-            judgeModel.BeginTransaction();
+            judgeModel.BeginTransaction();;
             foreach (string user in users)
                 judgeModel.InsertUser(user);
             judgeModel.EndTransaction();

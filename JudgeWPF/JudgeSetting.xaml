@@ -7,14 +7,16 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         ShowInTaskbar="False"
-        Icon="Resources/check-7062.png"
+        ResizeMode="NoResize"
+        Icon="Resources/Icon.png"
         Title="JudgeSetting" Height="300" Width="500">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0"
+              Margin="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="150" Width="Auto"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -36,7 +38,8 @@
                 <ComboBoxItem Content="Có" IsSelected="{Binding TreatExitCodeNonZeroAsRTE, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
             </ComboBox>
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1"
+              Margin="4">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Style="{StaticResource RoundButton}"
                         x:Name="btnSave"

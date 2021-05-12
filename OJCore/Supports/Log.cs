@@ -13,7 +13,7 @@
     {
         public static void print(LogType type, string format, params object[] args)
         {
-            return;
+            /*
             var tmp = Console.ForegroundColor;
             if (type == LogType.Info)
             {
@@ -32,7 +32,7 @@
             }
             Console.ForegroundColor = tmp;
             Console.WriteLine(format, args);
-            //*/
+            */
         }
     }
 }

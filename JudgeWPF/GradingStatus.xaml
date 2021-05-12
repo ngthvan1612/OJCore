@@ -14,7 +14,7 @@
         x:Name="mainWindow"
         ResizeMode="CanMinimize"
         ShowInTaskbar="False"
-        Icon="Resources/check-7062.png"
+        Icon="Resources/Icon.png"
         SizeToContent="Height"
         Title="Đang chấm" Width="500">
     <Grid Height="Auto">

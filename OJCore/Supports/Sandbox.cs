@@ -89,14 +89,10 @@ namespace Judge.Supports
                 ErrorDialog = false
             };
 
-            string txt = "";
-
             foreach (var e in env)
             {
                 psi.EnvironmentVariables[e.Key] = e.Value;
-                txt += "SET " + e.Key + "=" + e.Value + "\n";
             }
-            File.WriteAllText("out.bat", txt);
 
             using (Process p = new Process())
             {
@@ -136,7 +132,7 @@ namespace Judge.Supports
                 {
                     if (cnt >= 2)
                     {
-                        File.WriteAllText("out" + DateTime.Now.Ticks.ToString().PadLeft(20, '0') + ".txt", cnt.ToString());
+                        //File.WriteAllText("out" + DateTime.Now.Ticks.ToString().PadLeft(20, '0') + ".txt", cnt.ToString());
                     }
                     return result;
                 }

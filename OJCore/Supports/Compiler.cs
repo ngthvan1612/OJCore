@@ -177,7 +177,7 @@ namespace Judge.Supports
 
         public void SaveTest()
         {
-            File.WriteAllText("out.json", this.ToString());
+            //File.WriteAllText("out.json", this.ToString());
         }
 
         public object Clone()

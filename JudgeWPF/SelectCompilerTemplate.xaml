@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:JudgeWPF"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Icon="Resources/check-7062.png"
+        Icon="Resources/Icon.png"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
         SizeToContent="Height"
-        Title="SelectCompilerTemplate" Width="400">
+        Title="Chọn trình biên dịch" Width="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -26,8 +26,8 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Content="Template" Style="{StaticResource LabelBeforeTextBox}"/>
-            <Label Grid.Row="1" Content="Location" Style="{StaticResource LabelBeforeTextBox}"/>
+            <Label Grid.Row="0" Content="Mẫu" Style="{StaticResource LabelBeforeTextBox}"/>
+            <Label Grid.Row="1" Content="Đường dẫn" Style="{StaticResource LabelBeforeTextBox}"/>
 
             <ComboBox Grid.Row="0"
                       Grid.Column="1"
@@ -52,7 +52,7 @@
                 <Button Grid.Column="1" Background="Transparent" BorderBrush="Transparent"
                         x:Name="btnOpenFolder"
                         Click="btnOpenFolder_Click">
-                    <Image Source="Folder-Open-icon.png" Width="16" Height="16"/>
+                    <Image Source="Resources/Folder-Open-icon.png" Width="20" Height="20"/>
                 </Button>
             </Grid>
         </Grid>

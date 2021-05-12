@@ -6,6 +6,7 @@
     using System.Data;
     using System.Data.SQLite;
     using Judge.Types;
+    using System.Windows.Forms;
 
     /// <summary>
     /// Thêm, sửa xóa, cập nhật, lưu, mở thông tin chấm điểm từ CSDL
@@ -36,6 +37,9 @@
 
         public void Close()
         {
+            RemoveAllProblems();
+            RemoveAllUsers();
+            RemoveAllSubmissions();
             connection.Close();
             connection = new SQLiteConnection("Data Source=:memory:;Version=3;foreign keys=true;");
             connection.Open();
@@ -45,17 +49,17 @@
 
         private void CreateNecessaryTables()
         {
-            string CreateProblemsTable = "CREATE TABLE IF NOT EXISTS Problems ( " +
+            string CreateProblemsTable = "CREATE TABLE Problems ( " +
                 "ID    INTEGER, " +
                 "ProblemName   TEXT UNIQUE, " +
                 "PRIMARY KEY(ID AUTOINCREMENT) " +
             ");";
-            string CreateUsersTable = "CREATE TABLE IF NOT EXISTS Users( " +
+            string CreateUsersTable = "CREATE TABLE Users( " +
                 "ID    INTEGER, " +
                 "UserName  TEXT UNIQUE, " +
                 "PRIMARY KEY(ID AUTOINCREMENT) " +
             ");";
-            string CreateSubmissionsTable = "CREATE TABLE IF NOT EXISTS Submissions( " +
+            string CreateSubmissionsTable = "CREATE TABLE Submissions( " +
                 "ID    INTEGER, " +
                 "ProblemID INTEGER NOT NULL, " +
                 "UserID    INTEGER NOT NULL, " +
@@ -66,7 +70,7 @@
                 "FOREIGN KEY(ProblemID) REFERENCES Problems(ID) ON DELETE CASCADE ON UPDATE CASCADE, " +
                 "PRIMARY KEY(ID AUTOINCREMENT) " +
             ");";
-            string CreateSubmissionTestcaseResultsTable = "CREATE TABLE IF NOT EXISTS SubmissionTestcaseResults ( " +
+            string CreateSubmissionTestcaseResultsTable = "CREATE TABLE SubmissionTestcaseResults ( " +
                 "SubmissionID  INTEGER, " +
                 "Testcase  TEXT, " +
                 "TimeExecuted  INTEGER, " +
@@ -76,7 +80,7 @@
                 "FOREIGN KEY(SubmissionID) REFERENCES Submissions(ID) ON DELETE CASCADE ON UPDATE CASCADE, " +
                 "PRIMARY KEY(SubmissionID, Testcase) " +
             ");";
-            string CreateSettingsTable = "CREATE TABLE IF NOT EXISTS Settings( " +
+            string CreateSettingsTable = "CREATE TABLE Settings( " +
                 "Name  TEXT NOT NULL UNIQUE, " +
                 "Value TEXT NOT NULL, " +
                 "PRIMARY KEY(Name) " +
@@ -103,27 +107,6 @@
                 command.Parameters.Add(new SQLiteParameter("@lang", lang));
                 command.Parameters.Add(new SQLiteParameter("@ms", ms));
                 command.ExecuteNonQuery();
-            }
-        }
-
-        private void UpdateSetting(string name, string newValue)
-        {
-            string query = "INSERT OR REPLACE INTO Settings([Name], [Value]) VALUES (@setting_name, @setting_value);";
-            using (SQLiteCommand command = new SQLiteCommand(query, connection))
-            {
-                command.Parameters.Add(new SQLiteParameter("@setting_name", name));
-                command.Parameters.Add(new SQLiteParameter("@setting_value", newValue));
-                command.ExecuteNonQuery();
-            }
-        }
-
-        private string GetSetting(string name)
-        {
-            string query = "SELECT [Value] FROM Settings WHERE [Name] = @setting_name";
-            using (SQLiteCommand command = new SQLiteCommand(query, connection))
-            {
-                command.Parameters.Add(new SQLiteParameter("@setting_name", name));
-                return Convert.ToString(command.ExecuteScalar());
             }
         }
 
@@ -176,6 +159,16 @@
 
         public void InsertUser(string name)
         {
+            //DataSet ds = new DataSet("test");
+            //using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Users;", connection))
+            //{
+            //    using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(command))
+            //    {
+            //        adapter.Fill(ds);
+            //    }
+            //}
+            //ExportManager.ExportDataSetToExcel(ds);
+            //ds.Dispose();
             using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Users(UserName) VALUES(@usrName);", this.connection))
             {
                 command.Parameters.Add(new SQLiteParameter("@usrName", name));
@@ -498,7 +491,7 @@
         {
             SQLiteConnection source = new SQLiteConnection(string.Format("Data Source='{0}';Version=3", fileName));
             source.Open();
-            source.BackupDatabase(connection, "main", "main", -1, null, 0);
+            source.BackupDatabase(connection, "main", "main", -1, null, -1);
             source.Close();
         }
 

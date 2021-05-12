@@ -15,6 +15,22 @@ using System.Drawing;
 
 namespace JudgeWPF
 {
+    public class FontConverterToJson : JsonConverter<Font>
+    {
+        public override Font Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var tmp = reader.GetString();
+            if (tmp == null)
+                return new Font("Consolas", 12);
+            return new FontConverter().ConvertFromString(tmp) as Font;
+        }
+
+        public override void Write(Utf8JsonWriter writer, Font value, JsonSerializerOptions options)
+        {
+            writer.WriteString("", new FontConverter().ConvertToString(value));
+        }
+    }
+
     public class Settings
     {
         public bool TreatExitCodeNonZeroAsRTE { get; set; } = false;
